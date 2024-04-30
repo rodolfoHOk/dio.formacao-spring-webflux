@@ -51,3 +51,9 @@
 - [Códigos exemplos com Mono](/reactor/reactor-sample/src/main/java/me/dio/hiokdev/reactor/sample/MonoSample.java)
 
 - [Códigos exemplos com Flux](/reactor/reactor-sample/src/main/java/me/dio/hiokdev/reactor/sample/FluxSample.java)
+
+## Resolvendo Problemas Simples Usando Programação Reativa com Reactor
+
+- [Código fonte](https://github.com/rodolfoHOk/dio.desafio-reactor)
+
+##
