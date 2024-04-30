@@ -1,0 +1,18 @@
+plugins {
+    id 'java'
+}
+
+group = 'me.dio.hiokdev'
+version = '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'io.projectreactor:reactor-core:3.6.5'
+}
+
+test {
+    useJUnitPlatform()
+}
