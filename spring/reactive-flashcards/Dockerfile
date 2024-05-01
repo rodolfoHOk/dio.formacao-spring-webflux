@@ -1,6 +1,6 @@
 FROM gradle:8.7.0-jdk21
 
-RUN apt update && apt upgrade -qq -y
+RUN apt update && apt upgrade -qq -y --no-install-recommends
 
 ENV INSTALL_PATH /reactive-flashcards
 
