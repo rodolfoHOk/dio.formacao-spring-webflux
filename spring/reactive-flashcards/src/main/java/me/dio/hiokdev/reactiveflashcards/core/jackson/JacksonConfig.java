@@ -1,4 +1,4 @@
-package me.dio.hiokdev.reactiveflashcards.core;
+package me.dio.hiokdev.reactiveflashcards.core.jackson;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.DeserializationFeature;
