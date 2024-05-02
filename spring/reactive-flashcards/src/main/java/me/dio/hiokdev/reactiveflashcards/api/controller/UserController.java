@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -57,6 +58,13 @@ public class UserController {
         return userService.update(userMapper.toDocument(requestBody, id))
                 .doFirst(() -> log.info("==== Updating a user with follow info [body: {}, id: {}]", requestBody, id))
                 .map(userMapper::toResponse);
+    }
+
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @DeleteMapping(value = "{id}")
+    public Mono<Void> delete(@PathVariable @Valid @MongoId(message = "{userController.id}") final String id) {
+        return userService.delete(id)
+                .doFirst(() -> log.info("==== Deleting a user with follow id {}", id));
     }
 
 }
