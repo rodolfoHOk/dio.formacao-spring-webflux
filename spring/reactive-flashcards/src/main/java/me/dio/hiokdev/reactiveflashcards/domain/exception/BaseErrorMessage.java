@@ -16,6 +16,7 @@ public class BaseErrorMessage {
     public static final BaseErrorMessage GENERIC_BAD_REQUEST = new BaseErrorMessage("generic.badRequest");
     public static final BaseErrorMessage GENERIC_METHOD_NOT_ALLOWED = new BaseErrorMessage("generic.methodNotAllowed");
     public static final BaseErrorMessage USER_NOT_FOUND = new BaseErrorMessage("user.notFound");
+    public static final BaseErrorMessage DECK_NOT_FOUND = new BaseErrorMessage("deck.notFound");
 
     private final String key;
     private String[] params;
