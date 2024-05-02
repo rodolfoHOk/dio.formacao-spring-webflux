@@ -56,9 +56,24 @@
 
 - [Código fonte](https://github.com/rodolfoHOk/dio.desafio-reactor)
 
-## Desenvolvimento de APIs Reativas com Spring WebFlux
+## Desenvolvimento de APIs Reativas com Spring WebFlux: API de Flashcards
 
 - [Código fonte](/spring/reactive-flashcards/)
+
+### Etapas:
+
+- Criando o projeto com spring initializr
+- Adicionando as dependências
+- Configurando o Docker
+- Configurando o Jackson
+- Configurando o MongoDB
+- Criando os documents
+- Criando os repositories
+- Criando endpoint de criação de novo usuário
+- Criando exceptions
+- Criando classe de mensagens de errors
+- Criando exception handler com WebExceptionHandler
+-
 
 ### Links
 
