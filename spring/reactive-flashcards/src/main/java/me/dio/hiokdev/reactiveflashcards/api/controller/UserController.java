@@ -16,6 +16,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -35,9 +36,9 @@ public class UserController {
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Mono<UserResponse> save(@Valid @RequestBody final UserRequest request) {
-        return userService.save(userMapper.toDocument(request))
-                .doFirst(() -> log.info("==== Saving a user with follow data {}", request))
+    public Mono<UserResponse> save(@Valid @RequestBody final UserRequest requestBody) {
+        return userService.save(userMapper.toDocument(requestBody))
+                .doFirst(() -> log.info("==== Saving a user with follow data {}", requestBody))
                 .map(userMapper::toResponse);
     }
 
@@ -45,6 +46,16 @@ public class UserController {
     public Mono<UserResponse> findById(@PathVariable @Valid @MongoId(message = "{userController.id}") final String id) {
         return userQueryService.findById(id)
                 .doFirst(() -> log.info("==== Finding a user with follow id {}", id))
+                .map(userMapper::toResponse);
+    }
+
+    @PutMapping(value = "{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public Mono<UserResponse> update(
+            @PathVariable @Valid @MongoId(message = "{userController.id}") final String id,
+            @RequestBody @Valid final UserRequest requestBody
+    ) {
+        return userService.update(userMapper.toDocument(requestBody, id))
+                .doFirst(() -> log.info("==== Updating a user with follow info [body: {}, id: {}]", requestBody, id))
                 .map(userMapper::toResponse);
     }
 
