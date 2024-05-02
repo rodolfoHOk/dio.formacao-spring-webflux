@@ -6,11 +6,15 @@ import lombok.extern.slf4j.Slf4j;
 import me.dio.hiokdev.reactiveflashcards.api.controller.request.DeckRequest;
 import me.dio.hiokdev.reactiveflashcards.api.controller.response.DeckResponse;
 import me.dio.hiokdev.reactiveflashcards.api.mapper.DeckMapper;
+import me.dio.hiokdev.reactiveflashcards.core.validation.MongoId;
 import me.dio.hiokdev.reactiveflashcards.domain.service.DeckService;
+import me.dio.hiokdev.reactiveflashcards.domain.service.query.DeckQueryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,6 +30,7 @@ import reactor.core.publisher.Mono;
 public class DeckController {
 
     public final DeckService deckService;
+    public final DeckQueryService deckQueryService;
     private final DeckMapper deckMapper;
 
     @ResponseStatus(HttpStatus.CREATED)
@@ -36,4 +41,11 @@ public class DeckController {
                 .map(deckMapper::toResponse);
     }
 
+    @GetMapping(value = "{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public Mono<DeckResponse> findById(@PathVariable @Valid @MongoId(message = "{deckController.id}") final String id) {
+        return deckQueryService.findById(id)
+                .doFirst(() -> log.info("==== Finding a deck with follow id {}", id))
+                .map(deckMapper::toResponse);
+    }
+    
 }
