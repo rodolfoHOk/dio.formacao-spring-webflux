@@ -63,3 +63,5 @@
 ### Links
 
 - [Spring WebFlux](https://docs.spring.io/spring-framework/reference/web/webflux.html)
+
+- [Unicode characters escape sequence](https://www.rapidtables.com/code/text/unicode-characters.html)

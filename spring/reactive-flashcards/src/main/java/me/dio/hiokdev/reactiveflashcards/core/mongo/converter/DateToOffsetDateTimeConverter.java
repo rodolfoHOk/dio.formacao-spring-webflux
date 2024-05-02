@@ -9,7 +9,7 @@ import java.util.Date;
 public class DateToOffsetDateTimeConverter implements Converter<Date, OffsetDateTime> {
 
     @Override
-    public OffsetDateTime convert(Date source) {
+    public OffsetDateTime convert(final Date source) {
         return OffsetDateTime.ofInstant(source.toInstant(), ZoneId.systemDefault());
     }
 

@@ -10,12 +10,12 @@ import org.bson.types.ObjectId;
 public class MongoIdValidator implements ConstraintValidator<MongoId, String> {
 
     @Override
-    public void initialize(MongoId constraintAnnotation) {
+    public void initialize(final MongoId constraintAnnotation) {
         ConstraintValidator.super.initialize(constraintAnnotation);
     }
 
     @Override
-    public boolean isValid(String value, ConstraintValidatorContext constraintValidatorContext) {
+    public boolean isValid(final String value, final ConstraintValidatorContext constraintValidatorContext) {
         log.info("==== checking if {} is a valid mongoDB id", value);
         return StringUtils.isNotBlank(value) && ObjectId.isValid(value);
     }
