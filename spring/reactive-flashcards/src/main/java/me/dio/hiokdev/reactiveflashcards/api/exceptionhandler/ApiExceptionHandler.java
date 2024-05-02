@@ -18,6 +18,7 @@ import org.springframework.core.io.buffer.DefaultDataBufferFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.support.WebExchangeBindException;
 import org.springframework.web.server.MethodNotAllowedException;
 import org.springframework.web.server.ResponseStatusException;
@@ -41,10 +42,10 @@ public class ApiExceptionHandler implements WebExceptionHandler {
     public Mono<Void> handle(final ServerWebExchange exchange, final Throwable ex) {
         return Mono.error(ex)
                 .onErrorResume(NotFoundException.class, e -> handleNotFoundException(exchange, e))
-                .onErrorResume(ResponseStatusException.class, e -> handleResponseStatusException(exchange, e))
                 .onErrorResume(ConstraintViolationException.class, e -> handleConstraintViolationException(exchange, e))
                 .onErrorResume(WebExchangeBindException.class, e -> handleWebExchangeBindException(exchange, e))
                 .onErrorResume(MethodNotAllowedException.class, e -> handleMethodNotAllowedException(exchange, e))
+                .onErrorResume(ResponseStatusException.class, e -> handleResponseStatusException(exchange, e))
                 .onErrorResume(ReactiveFlashCardsException.class, e -> handleReactiveFlashCardsException(exchange, e))
                 .onErrorResume(Exception.class, e -> handleException(exchange, e))
                 .onErrorResume(JsonProcessingException.class, e -> handleJsonProcessingException(exchange, e))
@@ -111,7 +112,8 @@ public class ApiExceptionHandler implements WebExceptionHandler {
     ) {
         return Mono.fromCallable(() -> {
                     prepareExchange(exchange, HttpStatus.METHOD_NOT_ALLOWED);
-                    return BaseErrorMessage.GENERIC_METHOD_NOT_ALLOWED.getMessage();
+                    return BaseErrorMessage.GENERIC_METHOD_NOT_ALLOWED
+                            .params(exchange.getRequest().getMethod().name()).getMessage();
                 })
                 .map(message -> buildError(HttpStatus.METHOD_NOT_ALLOWED, message))
                 .doFirst(() -> log.error("==== MethodNotAllowedException: Method [{}] is not allowed at [{}]",
@@ -191,7 +193,9 @@ public class ApiExceptionHandler implements WebExceptionHandler {
     ) {
         return Flux.fromIterable(exception.getAllErrors())
                 .map(objectError -> ErrorFieldResponse.builder()
-                        .name(objectError.getObjectName())
+                        .name(objectError instanceof FieldError fieldError
+                                ? fieldError.getField()
+                                : objectError.getObjectName())
                         .message(messageSource.getMessage(objectError, LocaleContextHolder.getLocale()))
                         .build()
                 )
