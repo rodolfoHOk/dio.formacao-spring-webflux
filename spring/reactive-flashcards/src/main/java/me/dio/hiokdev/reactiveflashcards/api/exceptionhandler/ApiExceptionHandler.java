@@ -2,17 +2,21 @@ package me.dio.hiokdev.reactiveflashcards.api.exceptionhandler;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.validation.ConstraintViolationException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.dio.hiokdev.reactiveflashcards.api.controller.response.ProblemResponse;
 import me.dio.hiokdev.reactiveflashcards.domain.exception.BaseErrorMessage;
+import me.dio.hiokdev.reactiveflashcards.domain.exception.NotFoundException;
 import me.dio.hiokdev.reactiveflashcards.domain.exception.ReactiveFlashCardsException;
 import org.springframework.core.annotation.Order;
 import org.springframework.core.io.buffer.DefaultDataBufferFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
+import org.springframework.web.bind.support.WebExchangeBindException;
 import org.springframework.web.server.MethodNotAllowedException;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.server.ServerWebExchange;
 import org.springframework.web.server.WebExceptionHandler;
 import reactor.core.publisher.Mono;
@@ -30,11 +34,41 @@ public class ApiExceptionHandler implements WebExceptionHandler {
     @Override
     public Mono<Void> handle(final ServerWebExchange exchange, final Throwable ex) {
         return Mono.error(ex)
+                .onErrorResume(NotFoundException.class, e -> handleNotFoundException(exchange, e))
+                .onErrorResume(ResponseStatusException.class, e -> handleResponseStatusException(exchange, e))
+//                .onErrorResume(ConstraintViolationException.class, e -> )
+//                .onErrorResume(WebExchangeBindException.class, e -> )
                 .onErrorResume(MethodNotAllowedException.class, e -> handleMethodNotAllowedException(exchange, e))
                 .onErrorResume(ReactiveFlashCardsException.class, e -> handleReactiveFlashCardsException(exchange, e))
-                .onErrorResume(JsonProcessingException.class, e -> handleJsonProcessingException(exchange, e))
                 .onErrorResume(Exception.class, e -> handleException(exchange, e))
+                .onErrorResume(JsonProcessingException.class, e -> handleJsonProcessingException(exchange, e))
                 .then();
+    }
+
+    private Mono<Void> handleNotFoundException(
+            final ServerWebExchange exchange,
+            final NotFoundException exception
+    ) {
+        return Mono.fromCallable(() -> {
+                    prepareExchange(exchange, HttpStatus.NOT_FOUND);
+                    return exception.getMessage();
+                })
+                .map(message -> buildError(HttpStatus.NOT_FOUND, message))
+                .doFirst(() -> log.error("==== NotFoundException ", exception))
+                .flatMap(problemResponse -> writeResponse(exchange, problemResponse));
+    }
+
+    private Mono<Void> handleResponseStatusException(
+            final ServerWebExchange exchange,
+            final ResponseStatusException exception
+    ) {
+        return Mono.fromCallable(() -> {
+                    prepareExchange(exchange, HttpStatus.NOT_FOUND);
+                    return BaseErrorMessage.GENERIC_NOT_FOUND.getMessage();
+                })
+                .map(message -> buildError(HttpStatus.NOT_FOUND, message))
+                .doFirst(() -> log.error("==== ResponseStatusException ", exception))
+                .flatMap(problemResponse -> writeResponse(exchange, problemResponse));
     }
 
     private Mono<Void> handleMethodNotAllowedException(
@@ -64,6 +98,16 @@ public class ApiExceptionHandler implements WebExceptionHandler {
                 .flatMap(problemResponse -> writeResponse(exchange, problemResponse));
     }
 
+    private Mono<Void> handleException(final ServerWebExchange exchange, final Exception exception) {
+        return Mono.fromCallable(() -> {
+                    prepareExchange(exchange, HttpStatus.INTERNAL_SERVER_ERROR);
+                    return BaseErrorMessage.GENERIC_EXCEPTION.getMessage();
+                })
+                .map(message -> buildError(HttpStatus.INTERNAL_SERVER_ERROR, message))
+                .doFirst(() -> log.error("==== Exception ", exception))
+                .flatMap(problemResponse -> writeResponse(exchange, problemResponse));
+    }
+
     private Mono<Void> handleJsonProcessingException(
             final ServerWebExchange exchange,
             final JsonProcessingException exception
@@ -75,16 +119,6 @@ public class ApiExceptionHandler implements WebExceptionHandler {
                 .map(message -> buildError(HttpStatus.BAD_REQUEST, message))
                 .doFirst(() -> log.error("==== JsonProcessingException: Failed to map exception for the request {} ",
                         exchange.getRequest().getPath().value(), exception))
-                .flatMap(problemResponse -> writeResponse(exchange, problemResponse));
-    }
-
-    private Mono<Void> handleException(final ServerWebExchange exchange, final Exception exception) {
-        return Mono.fromCallable(() -> {
-                    prepareExchange(exchange, HttpStatus.INTERNAL_SERVER_ERROR);
-                    return BaseErrorMessage.GENERIC_EXCEPTION.getMessage();
-                })
-                .map(message -> buildError(HttpStatus.INTERNAL_SERVER_ERROR, message))
-                .doFirst(() -> log.error("==== Exception ", exception))
                 .flatMap(problemResponse -> writeResponse(exchange, problemResponse));
     }
 
