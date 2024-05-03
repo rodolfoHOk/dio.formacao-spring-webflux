@@ -6,9 +6,13 @@ import me.dio.hiokdev.reactiveflashcards.domain.document.Card;
 import me.dio.hiokdev.reactiveflashcards.domain.document.Question;
 import me.dio.hiokdev.reactiveflashcards.domain.document.StudyCard;
 import me.dio.hiokdev.reactiveflashcards.domain.document.StudyDocument;
+import me.dio.hiokdev.reactiveflashcards.domain.exception.BaseErrorMessage;
+import me.dio.hiokdev.reactiveflashcards.domain.exception.DeckInStudyException;
+import me.dio.hiokdev.reactiveflashcards.domain.exception.NotFoundException;
 import me.dio.hiokdev.reactiveflashcards.domain.mapper.StudyDomainMapper;
 import me.dio.hiokdev.reactiveflashcards.domain.repository.StudyRepository;
 import me.dio.hiokdev.reactiveflashcards.domain.service.query.DeckQueryService;
+import me.dio.hiokdev.reactiveflashcards.domain.service.query.StudyQueryService;
 import me.dio.hiokdev.reactiveflashcards.domain.service.query.UserQueryService;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
@@ -25,11 +29,13 @@ public class StudyService {
 
     private final UserQueryService userQueryService;
     private final DeckQueryService deckQueryService;
+    private final StudyQueryService studyQueryService;
     private final StudyDomainMapper studyDomainMapper;
     private final StudyRepository studyRepository;
 
     public Mono<StudyDocument> start(final StudyDocument studyDocument) {
-        return userQueryService.findById(studyDocument.userId())
+        return verifyPendingStudy(studyDocument)
+                .then(Mono.defer(() -> userQueryService.findById(studyDocument.userId())))
                 .flatMap(user -> deckQueryService.findById(studyDocument.studyDeck().deckId()))
                 .flatMap(deck -> fillDeckStudyCards(studyDocument, deck.cards()))
                 .map(study -> study.toBuilder()
@@ -37,6 +43,16 @@ public class StudyService {
                         .build())
                 .flatMap(studyRepository::save)
                 .doOnSuccess(study -> log.info("a follow study was save {}", study));
+    }
+
+    private Mono<Void> verifyPendingStudy(final StudyDocument studyDocument) {
+        return studyQueryService
+                .findPendingStudyByUserIdAndDeckId(studyDocument.userId(), studyDocument.studyDeck().deckId())
+                .flatMap(study -> Mono.defer(() -> Mono.error(new DeckInStudyException(BaseErrorMessage
+                        .DECK_IN_STUDY.params(studyDocument.userId(), studyDocument.studyDeck().deckId())
+                        .getMessage()))))
+                .onErrorResume(NotFoundException.class, e -> Mono.empty())
+                .then();
     }
 
     private Mono<StudyDocument> fillDeckStudyCards(final StudyDocument studyDocument, final Set<Card> cards) {

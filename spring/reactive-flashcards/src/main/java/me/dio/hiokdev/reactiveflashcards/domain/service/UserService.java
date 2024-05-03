@@ -32,13 +32,13 @@ public class UserService {
 
     public Mono<UserDocument> update(final UserDocument userDocument) {
         return verifyEmail(userDocument)
-                .then(Mono.defer(() -> userQueryService.findById(userDocument.id())
-                        .map(user -> userDocument.toBuilder()
-                                .createdAt(user.createdAt())
-                                .updatedAt(user.updatedAt())
-                                .build())
-                        .flatMap(userRepository::save)
-                        .doFirst(() -> log.info("==== Try to update a user with follow info {}", userDocument))));
+                .then(Mono.defer(() -> userQueryService.findById(userDocument.id())))
+                .map(user -> userDocument.toBuilder()
+                        .createdAt(user.createdAt())
+                        .updatedAt(user.updatedAt())
+                        .build())
+                .flatMap(userRepository::save)
+                .doFirst(() -> log.info("==== Try to update a user with follow info {}", userDocument));
     }
 
     public Mono<Void> delete(final String id) {

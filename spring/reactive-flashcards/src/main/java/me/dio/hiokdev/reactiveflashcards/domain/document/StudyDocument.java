@@ -17,6 +17,7 @@ public record StudyDocument(
         @Field("user_id") String userId,
         @Field("study_deck") StudyDeck studyDeck,
         List<Question> questions,
+        Boolean completed,
         @CreatedDate @Field("created_at") OffsetDateTime createdAt,
         @LastModifiedDate @Field("updated_at") OffsetDateTime updatedAt
 ) {
@@ -26,7 +27,7 @@ public record StudyDocument(
     }
 
     public StudyDocumentBuilder toBuilder() {
-        return new StudyDocumentBuilder(id, userId, studyDeck, questions, createdAt, updatedAt);
+        return new StudyDocumentBuilder(id, userId, studyDeck, questions, completed, createdAt, updatedAt);
     }
 
     public Question getLastPendingQuestion() {
@@ -40,6 +41,7 @@ public record StudyDocument(
         private String userId;
         private StudyDeck studyDeck;
         private List<Question> questions = new ArrayList<>();
+        private Boolean completed = false;
         private OffsetDateTime createdAt;
         private OffsetDateTime updatedAt;
 
@@ -50,6 +52,7 @@ public record StudyDocument(
                 String userId,
                 StudyDeck studyDeck,
                 List<Question> questions,
+                Boolean completed,
                 OffsetDateTime createdAt,
                 OffsetDateTime updatedAt
         ) {
@@ -57,6 +60,7 @@ public record StudyDocument(
             this.userId = userId;
             this.studyDeck = studyDeck;
             this.questions = questions;
+            this.completed = completed;
             this.createdAt = createdAt;
             this.updatedAt = updatedAt;
         }
@@ -86,6 +90,11 @@ public record StudyDocument(
             return this;
         }
 
+        public StudyDocumentBuilder completed(Boolean completed) {
+            this.completed = completed;
+            return this;
+        }
+
         public StudyDocumentBuilder createdAt(final OffsetDateTime createdAt) {
             this.createdAt = createdAt;
             return this;
@@ -97,7 +106,7 @@ public record StudyDocument(
         }
 
         public StudyDocument build() {
-            return new StudyDocument(id, userId, studyDeck, questions, createdAt, updatedAt);
+            return new StudyDocument(id, userId, studyDeck, questions, completed, createdAt, updatedAt);
         }
 
     }

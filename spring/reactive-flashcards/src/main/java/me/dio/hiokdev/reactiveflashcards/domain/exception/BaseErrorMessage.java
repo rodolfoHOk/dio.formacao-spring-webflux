@@ -18,6 +18,8 @@ public class BaseErrorMessage {
     public static final BaseErrorMessage USER_NOT_FOUND = new BaseErrorMessage("user.notFound");
     public static final BaseErrorMessage DECK_NOT_FOUND = new BaseErrorMessage("deck.notFound");
     public static final BaseErrorMessage EMAIL_ALREADY_USED = new BaseErrorMessage("user.emailAlreadyUsed");
+    public static final BaseErrorMessage PENDING_STUDY_NOT_FOUND = new BaseErrorMessage("pendingStudy.notFound");
+    public static final BaseErrorMessage DECK_IN_STUDY = new BaseErrorMessage("study.deckInStudy");
 
     private final String key;
     private String[] params;

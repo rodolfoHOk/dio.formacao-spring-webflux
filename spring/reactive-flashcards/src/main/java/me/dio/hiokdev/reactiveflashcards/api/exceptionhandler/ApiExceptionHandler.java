@@ -5,6 +5,7 @@ import jakarta.validation.ConstraintViolationException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.dio.hiokdev.reactiveflashcards.api.exceptionhandler.handler.ConstraintViolationHandler;
+import me.dio.hiokdev.reactiveflashcards.api.exceptionhandler.handler.DeckInStudyHandler;
 import me.dio.hiokdev.reactiveflashcards.api.exceptionhandler.handler.EmailAlreadyUsedHandler;
 import me.dio.hiokdev.reactiveflashcards.api.exceptionhandler.handler.GenericExceptionHandler;
 import me.dio.hiokdev.reactiveflashcards.api.exceptionhandler.handler.JsonProcessingHandler;
@@ -13,6 +14,7 @@ import me.dio.hiokdev.reactiveflashcards.api.exceptionhandler.handler.NotFoundHa
 import me.dio.hiokdev.reactiveflashcards.api.exceptionhandler.handler.ReactiveFlashCardsHandler;
 import me.dio.hiokdev.reactiveflashcards.api.exceptionhandler.handler.ResponseStatusHandler;
 import me.dio.hiokdev.reactiveflashcards.api.exceptionhandler.handler.WebExchangeBindHandler;
+import me.dio.hiokdev.reactiveflashcards.domain.exception.DeckInStudyException;
 import me.dio.hiokdev.reactiveflashcards.domain.exception.EmailAlreadyUsedException;
 import me.dio.hiokdev.reactiveflashcards.domain.exception.NotFoundException;
 import me.dio.hiokdev.reactiveflashcards.domain.exception.ReactiveFlashCardsException;
@@ -31,6 +33,7 @@ import reactor.core.publisher.Mono;
 @RequiredArgsConstructor
 public class ApiExceptionHandler implements WebExceptionHandler {
 
+    private final DeckInStudyHandler deckInStudyHandler;
     private final EmailAlreadyUsedHandler emailAlreadyUsedHandler;
     private final NotFoundHandler notFoundHandler;
     private final ConstraintViolationHandler constraintViolationHandler;
@@ -44,6 +47,7 @@ public class ApiExceptionHandler implements WebExceptionHandler {
     @Override
     public Mono<Void> handle(final ServerWebExchange exchange, final Throwable ex) {
         return Mono.error(ex)
+                .onErrorResume(DeckInStudyException.class, e -> deckInStudyHandler.handlerException(exchange, e))
                 .onErrorResume(EmailAlreadyUsedException.class, e -> emailAlreadyUsedHandler
                         .handlerException(exchange, e))
                 .onErrorResume(NotFoundException.class, e -> notFoundHandler.handlerException(exchange, e))

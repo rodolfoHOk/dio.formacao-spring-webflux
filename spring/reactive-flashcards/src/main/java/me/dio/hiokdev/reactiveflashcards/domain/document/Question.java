@@ -1,14 +1,15 @@
 package me.dio.hiokdev.reactiveflashcards.domain.document;
 
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.time.OffsetDateTime;
 
 public record Question(
         String asked,
-        OffsetDateTime askedIn,
+        @Field("asked_in") OffsetDateTime askedIn,
         String answered,
-        OffsetDateTime answeredIn,
+        @Field("answered_in") OffsetDateTime answeredIn,
         String expected
 ) {
 
