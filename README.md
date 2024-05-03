@@ -73,6 +73,14 @@
 - Criando exceptions
 - Criando classe de mensagens de errors
 - Criando exception handler com WebExceptionHandler
+- Criando endpoint de busca de usuário por id
+- Criando endpoint de atualização de usuário
+- Criando endpoint de exclusão de usuário
+- Criando endpoint de criação de deck
+- Criando endpoint de busca de deck por id
+- Adicionando verificação de email para criação e atualização de usuário
+- Criando endpoint de listagem de deck
+- Criando endpoint de criação de estudo
 -
 
 ### Links
