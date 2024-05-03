@@ -4,6 +4,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.time.OffsetDateTime;
+import java.util.Objects;
 
 public record Question(
         String asked,
@@ -12,6 +13,10 @@ public record Question(
         @Field("answered_in") OffsetDateTime answeredIn,
         String expected
 ) {
+
+    public Boolean isNotAnswered() {
+        return Objects.isNull(answeredIn);
+    }
 
     public static QuestionBuilder builder(){
         return new QuestionBuilder();

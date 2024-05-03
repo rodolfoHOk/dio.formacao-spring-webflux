@@ -42,7 +42,7 @@ public class StudyService {
                         .question(generateRandomQuestion(study.studyDeck().cards()))
                         .build())
                 .flatMap(studyRepository::save)
-                .doOnSuccess(study -> log.info("a follow study was save {}", study));
+                .doOnSuccess(study -> log.info("A follow study was save {}", study));
     }
 
     private Mono<Void> verifyPendingStudy(final StudyDocument studyDocument) {
@@ -57,7 +57,7 @@ public class StudyService {
 
     private Mono<StudyDocument> fillDeckStudyCards(final StudyDocument studyDocument, final Set<Card> cards) {
         return Flux.fromIterable(cards)
-                .doFirst(() -> log.info("==== copy cards to new study"))
+                .doFirst(() -> log.info("==== Copy cards to new study"))
                 .map(studyDomainMapper::toStudyCard)
                 .collectList()
                 .map(studyCards -> studyDocument.studyDeck().toBuilder().cards(Set.copyOf(studyCards)).build())
@@ -65,7 +65,7 @@ public class StudyService {
     }
 
     private Question generateRandomQuestion(final Set<StudyCard> studyCards) {
-        log.info("==== generating a random question");
+        log.info("==== Generating a random question");
         var cards = new ArrayList<>(studyCards);
         var random = new Random();
         var position = random.nextInt(cards.size());

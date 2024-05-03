@@ -2,11 +2,14 @@ package me.dio.hiokdev.reactiveflashcards.domain.service.query;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import me.dio.hiokdev.reactiveflashcards.domain.document.Question;
 import me.dio.hiokdev.reactiveflashcards.domain.document.StudyDocument;
 import me.dio.hiokdev.reactiveflashcards.domain.exception.BaseErrorMessage;
 import me.dio.hiokdev.reactiveflashcards.domain.exception.NotFoundException;
 import me.dio.hiokdev.reactiveflashcards.domain.repository.StudyRepository;
+import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.util.Objects;
@@ -24,6 +27,30 @@ public class StudyQueryService {
                 .filter(Objects::nonNull)
                 .switchIfEmpty(Mono.defer(() -> Mono.error(new NotFoundException(BaseErrorMessage
                         .PENDING_STUDY_NOT_FOUND.params(userId, deckId).getMessage()))));
+    }
+
+    public Flux<StudyDocument> findAllByUserId(final String userId) {
+        return studyRepository.findAllByUserId(userId)
+                .doFirst(() -> log.info("==== Try to find studies with user id {}", userId));
+    }
+
+    public Mono<StudyDocument> findById(final String id) {
+        return studyRepository.findById(id)
+                .doFirst(() -> log.info("==== Getting a study with id {}", id))
+                .filter(Objects::nonNull)
+                .switchIfEmpty(Mono.defer(() -> Mono.error(new NotFoundException(BaseErrorMessage
+                        .STUDY_NOT_FOUND.params(id).getMessage()))));
+    }
+
+    public Mono<Question> getLastPendingQuestion(final String id) {
+        return findById(id)
+                .filter(study -> BooleanUtils.isFalse(study.completed()))
+                .switchIfEmpty(Mono.defer(() -> Mono.error(new NotFoundException(BaseErrorMessage
+                        .STUDY_QUESTION_NOT_FOUND.params(id).getMessage()))))
+                .flatMapMany(study -> Flux.fromIterable(study.questions()))
+                .filter(Question::isNotAnswered)
+                .doFirst(() -> log.info("==== Getting a current pending question in study {}", id))
+                .single();
     }
 
 }
