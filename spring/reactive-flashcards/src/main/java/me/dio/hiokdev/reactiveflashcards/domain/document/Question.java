@@ -18,6 +18,10 @@ public record Question(
         return Objects.isNull(answeredIn);
     }
 
+    public Boolean isCorrect(){
+        return Objects.nonNull(answeredIn) && answered.equals(expected);
+    }
+
     public static QuestionBuilder builder(){
         return new QuestionBuilder();
     }

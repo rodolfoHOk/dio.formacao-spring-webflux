@@ -19,6 +19,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.util.ArrayList;
+import java.util.Objects;
 import java.util.Random;
 import java.util.Set;
 
@@ -43,6 +44,16 @@ public class StudyService {
                         .build())
                 .flatMap(studyRepository::save)
                 .doOnSuccess(study -> log.info("A follow study was save {}", study));
+    }
+
+    public Mono<StudyDocument> answer(final String id, final String answer) {
+        return studyQueryService.findById(id)
+                .flatMap(studyQueryService::verifyIfFinished)
+                .map(study -> addAnswerToCurrentQuestion(study, answer))
+                .map(study -> {
+                    // TODO()
+                    return study;
+                });
     }
 
     private Mono<Void> verifyPendingStudy(final StudyDocument studyDocument) {
@@ -70,6 +81,23 @@ public class StudyService {
         var random = new Random();
         var position = random.nextInt(cards.size());
         return studyDomainMapper.toQuestion(cards.get(position));
+    }
+
+    private StudyDocument addAnswerToCurrentQuestion(final StudyDocument document, final String answer) {
+        var currentQuestion = document.getLastPendingQuestion();
+        var questions = document.questions();
+        currentQuestion = currentQuestion.toBuilder().answered(answer).build();
+        var currentQuestionIndex = questions.indexOf(currentQuestion);
+        questions.set(currentQuestionIndex, currentQuestion);
+        return document.toBuilder().questions(questions).build();
+    }
+
+    private Flux<StudyCard> getIncorrectAnsweredOrUnansweredStudyCards(final StudyDocument studyDocument) {
+        return Flux.fromIterable(studyDocument.studyDeck().cards())
+                .filter(card -> studyDocument.questions().stream()
+                        .filter(Question::isCorrect)
+                        .map(Question::asked)
+                        .anyMatch(questionAsk -> !card.front().equals(questionAsk)));
     }
 
 }
