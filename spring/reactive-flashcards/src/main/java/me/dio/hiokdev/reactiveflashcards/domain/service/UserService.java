@@ -27,8 +27,7 @@ public class UserService {
                 .filter(Objects::isNull)
                 .switchIfEmpty(Mono.defer(() -> Mono.error(new EmailAlreadyUsedException(BaseErrorMessage
                         .EMAIL_ALREADY_USED.params(userDocument.email()).getMessage()))))
-                .onErrorResume(NotFoundException.class, e -> userRepository.save(userDocument))
-                ;
+                .onErrorResume(NotFoundException.class, e -> userRepository.save(userDocument));
     }
 
     public Mono<UserDocument> update(final UserDocument userDocument) {

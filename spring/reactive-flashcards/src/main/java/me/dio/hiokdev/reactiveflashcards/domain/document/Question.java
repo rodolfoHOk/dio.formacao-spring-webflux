@@ -2,9 +2,13 @@ package me.dio.hiokdev.reactiveflashcards.domain.document;
 
 import lombok.Builder;
 
+import java.time.OffsetDateTime;
+
 public record Question(
         String asked,
+        OffsetDateTime askedIn,
         String answered,
+        OffsetDateTime answeredIn,
         String expected
 ) {
 

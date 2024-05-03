@@ -8,7 +8,9 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.time.OffsetDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Document(collection = "studies")
 public record StudyDocument(
@@ -22,5 +24,19 @@ public record StudyDocument(
 
     @Builder(toBuilder = true)
     public StudyDocument {}
+
+    public StudyDocument addQuestion(final Question question) {
+        var newQuestions = new ArrayList<Question>();
+        if (this.questions != null && !this.questions.isEmpty()) {
+            newQuestions.addAll(this.questions);
+        }
+        newQuestions.add(question);
+        return this.toBuilder().questions(newQuestions).build();
+    }
+
+    public Question getLastPendingQuestion() {
+        return this.questions.stream()
+                .filter(question -> Objects.isNull(question.answeredIn())).findFirst().orElseThrow();
+    }
 
 }
