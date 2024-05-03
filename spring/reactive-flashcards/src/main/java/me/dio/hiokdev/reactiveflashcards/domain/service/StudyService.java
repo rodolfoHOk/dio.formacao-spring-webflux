@@ -32,7 +32,9 @@ public class StudyService {
         return userQueryService.findById(studyDocument.userId())
                 .flatMap(user -> deckQueryService.findById(studyDocument.studyDeck().deckId()))
                 .flatMap(deck -> fillDeckStudyCards(studyDocument, deck.cards()))
-                .map(study -> study.addQuestion(generateRandomQuestion(study.studyDeck().cards())))
+                .map(study -> study.toBuilder()
+                        .question(generateRandomQuestion(study.studyDeck().cards()))
+                        .build())
                 .flatMap(studyRepository::save)
                 .doOnSuccess(study -> log.info("a follow study was save {}", study));
     }

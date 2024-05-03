@@ -12,10 +12,8 @@ public interface StudyDomainMapper {
     StudyCard toStudyCard(final Card card);
 
     @Mapping(target = "asked", source = "front")
-    @Mapping(target = "askedIn", expression = "java(java.time.OffsetDateTime.now())")
     @Mapping(target = "answered", ignore = true)
-    @Mapping(target = "answeredIn", ignore = true)
-    @Mapping(target = "expected", ignore = true)
+    @Mapping(target = "expected", source = "back")
     Question toQuestion(final StudyCard studyCard);
 
 }

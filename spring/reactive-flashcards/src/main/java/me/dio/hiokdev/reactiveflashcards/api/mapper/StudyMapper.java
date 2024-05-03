@@ -16,6 +16,7 @@ public interface StudyMapper {
     @Mapping(target = "studyDeck.deckId", source = "deckId")
     @Mapping(target = "studyDeck.cards", ignore = true)
     @Mapping(target = "questions", ignore = true)
+    @Mapping(target = "question", ignore = true)
     StudyDocument toDocument(final StudyRequest request);
 
     QuestionResponse toResponse(final Question question);
