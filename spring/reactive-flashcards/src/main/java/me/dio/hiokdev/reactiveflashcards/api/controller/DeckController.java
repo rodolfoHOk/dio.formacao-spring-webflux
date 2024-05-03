@@ -47,5 +47,5 @@ public class DeckController {
                 .doFirst(() -> log.info("==== Finding a deck with follow id {}", id))
                 .map(deckMapper::toResponse);
     }
-    
+
 }
