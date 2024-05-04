@@ -6,6 +6,8 @@ import me.dio.hiokdev.reactiveflashcards.domain.document.Card;
 import me.dio.hiokdev.reactiveflashcards.domain.document.Question;
 import me.dio.hiokdev.reactiveflashcards.domain.document.StudyCard;
 import me.dio.hiokdev.reactiveflashcards.domain.document.StudyDocument;
+import me.dio.hiokdev.reactiveflashcards.domain.dto.QuestionDTO;
+import me.dio.hiokdev.reactiveflashcards.domain.dto.StudyDTO;
 import me.dio.hiokdev.reactiveflashcards.domain.exception.BaseErrorMessage;
 import me.dio.hiokdev.reactiveflashcards.domain.exception.DeckInStudyException;
 import me.dio.hiokdev.reactiveflashcards.domain.exception.NotFoundException;
@@ -14,12 +16,13 @@ import me.dio.hiokdev.reactiveflashcards.domain.repository.StudyRepository;
 import me.dio.hiokdev.reactiveflashcards.domain.service.query.DeckQueryService;
 import me.dio.hiokdev.reactiveflashcards.domain.service.query.StudyQueryService;
 import me.dio.hiokdev.reactiveflashcards.domain.service.query.UserQueryService;
+import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.util.ArrayList;
-import java.util.Objects;
+import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
@@ -50,10 +53,11 @@ public class StudyService {
         return studyQueryService.findById(id)
                 .flatMap(studyQueryService::verifyIfFinished)
                 .map(study -> addAnswerToCurrentQuestion(study, answer))
-                .map(study -> {
-                    // TODO()
-                    return study;
-                });
+                .zipWhen(this::getNextPossibilities)
+                .map(tuple -> studyDomainMapper.toDTO(tuple.getT1(), tuple.getT2()))
+                .flatMap(this::setNewQuestion)
+                .map(studyDomainMapper::toDocument)
+                .flatMap(studyRepository::save);
     }
 
     private Mono<Void> verifyPendingStudy(final StudyDocument studyDocument) {
@@ -92,12 +96,41 @@ public class StudyService {
         return document.toBuilder().questions(questions).build();
     }
 
-    private Flux<StudyCard> getIncorrectAnsweredOrUnansweredStudyCards(final StudyDocument studyDocument) {
+    private Mono<List<String>> getNextPossibilities(final StudyDocument studyDocument) {
         return Flux.fromIterable(studyDocument.studyDeck().cards())
-                .filter(card -> studyDocument.questions().stream()
+                .map(StudyCard::front)
+                .filter(cardFront -> studyDocument.questions().stream()
                         .filter(Question::isCorrect)
                         .map(Question::asked)
-                        .anyMatch(questionAsk -> !card.front().equals(questionAsk)));
+                        .noneMatch(cardFront::equals))
+                .collectList()
+                .flatMap(cardsFront -> removeLastAsk(cardsFront, studyDocument.getLastAnsweredQuestion().asked()));
+    }
+
+    private Mono<List<String>> removeLastAsk(List<String> cardsFront, final String lastAsked) {
+        return Mono.just(cardsFront)
+                .filter(asks -> asks.size() == 1)
+                .switchIfEmpty(Mono.defer(() -> Mono.just(cardsFront.stream()
+                        .filter(lastAsked::equals)
+                        .toList())));
+    }
+
+    private Mono<StudyDTO> setNewQuestion(final StudyDTO studyDTO) {
+        return Mono.just(studyDTO.hasAnyAnswer())
+                .filter(BooleanUtils::isTrue)
+                .switchIfEmpty(Mono.defer(() -> Mono.error(new NotFoundException(BaseErrorMessage
+                        .STUDY_QUESTION_NOT_FOUND.params(studyDTO.id()).getMessage()))))
+                .flatMap(hasAnyAnswer -> generateNextQuestion(studyDTO))
+                .map(question -> studyDTO.toBuilder().question(question).build())
+                .onErrorResume(NotFoundException.class, e -> Mono.just(studyDTO));
+    }
+
+    private Mono<QuestionDTO> generateNextQuestion(final StudyDTO studyDTO) {
+        return Mono.just(studyDTO.remainAsks().get(new Random().nextInt(studyDTO.remainAsks().size())))
+                .map(ask -> studyDTO.studyDeck().cards().stream()
+                        .filter(card -> ask.equals(card.front()))
+                        .map(studyDomainMapper::toDTO)
+                        .findFirst().orElseThrow());
     }
 
 }

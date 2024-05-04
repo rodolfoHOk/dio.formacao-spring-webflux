@@ -1,36 +1,35 @@
-package me.dio.hiokdev.reactiveflashcards.domain.document;
+package me.dio.hiokdev.reactiveflashcards.domain.dto;
 
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.time.OffsetDateTime;
 import java.util.Objects;
 
-public record Question(
+public record QuestionDTO(
         String asked,
-        @Field("asked_in") OffsetDateTime askedIn,
+        OffsetDateTime askedIn,
         String answered,
-        @Field("answered_in") OffsetDateTime answeredIn,
+        OffsetDateTime answeredIn,
         String expected
 ) {
 
-    public static QuestionBuilder builder(){
-        return new QuestionBuilder();
+    public static QuestionDTOBuilder builder() {
+        return new QuestionDTOBuilder();
     }
 
-    public QuestionBuilder toBuilder(){
-        return new QuestionBuilder(asked, askedIn, answered, answeredIn, expected);
+    public QuestionDTOBuilder toBuilder() {
+        return new QuestionDTOBuilder(asked, askedIn, answered, answeredIn, expected);
     }
 
     public Boolean isNotAnswered() {
         return Objects.isNull(answeredIn);
     }
 
-    public Boolean isCorrect(){
+    public Boolean isCorrect() {
         return Objects.nonNull(answeredIn) && answered.equals(expected);
     }
 
-    public static class QuestionBuilder {
+    public static class QuestionDTOBuilder {
 
         private String asked;
         private OffsetDateTime askedIn;
@@ -38,9 +37,9 @@ public record Question(
         private OffsetDateTime answeredIn;
         private String expected;
 
-        public QuestionBuilder() { }
+        public QuestionDTOBuilder() { }
 
-        public QuestionBuilder(
+        public QuestionDTOBuilder(
                 String asked,
                 OffsetDateTime askedIn,
                 String answered,
@@ -54,7 +53,7 @@ public record Question(
             this.expected = expected;
         }
 
-        public QuestionBuilder asked(final String asked) {
+        public QuestionDTOBuilder asked(final String asked) {
             if (StringUtils.isNotBlank(asked)) {
                 this.asked = asked;
                 this.askedIn = OffsetDateTime.now();
@@ -62,7 +61,7 @@ public record Question(
             return this;
         }
 
-        public QuestionBuilder answered(final String answered) {
+        public QuestionDTOBuilder answered(final String answered) {
             if (StringUtils.isNotBlank(answered)) {
                 this.answered = answered;
                 this.answeredIn = OffsetDateTime.now();
@@ -70,13 +69,13 @@ public record Question(
             return this;
         }
 
-        public QuestionBuilder expected(final String expected) {
+        public QuestionDTOBuilder expected(final String expected) {
             this.expected = expected;
             return this;
         }
 
-        public Question build() {
-            return new Question(asked, askedIn, answered, answeredIn, expected);
+        public QuestionDTO build() {
+            return new QuestionDTO(asked, askedIn, answered, answeredIn, expected);
         }
 
     }

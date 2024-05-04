@@ -8,6 +8,7 @@ import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 
@@ -27,12 +28,19 @@ public record StudyDocument(
     }
 
     public StudyDocumentBuilder toBuilder() {
-        return new StudyDocumentBuilder(id, userId, studyDeck, questions, completed, createdAt, updatedAt);
+        return new StudyDocumentBuilder(id, userId, studyDeck, questions, createdAt, updatedAt);
     }
 
     public Question getLastPendingQuestion() {
         return this.questions.stream()
                 .filter(question -> Objects.isNull(question.answeredIn())).findFirst().orElseThrow();
+    }
+
+    public Question getLastAnsweredQuestion() {
+        return this.questions.stream()
+                .filter(question -> Objects.nonNull(question.answeredIn()))
+                .max(Comparator.comparing(Question::answeredIn))
+                .orElseThrow();
     }
 
     public static class StudyDocumentBuilder {
@@ -41,7 +49,6 @@ public record StudyDocument(
         private String userId;
         private StudyDeck studyDeck;
         private List<Question> questions = new ArrayList<>();
-        private Boolean completed = false;
         private OffsetDateTime createdAt;
         private OffsetDateTime updatedAt;
 
@@ -52,7 +59,6 @@ public record StudyDocument(
                 String userId,
                 StudyDeck studyDeck,
                 List<Question> questions,
-                Boolean completed,
                 OffsetDateTime createdAt,
                 OffsetDateTime updatedAt
         ) {
@@ -60,7 +66,6 @@ public record StudyDocument(
             this.userId = userId;
             this.studyDeck = studyDeck;
             this.questions = questions;
-            this.completed = completed;
             this.createdAt = createdAt;
             this.updatedAt = updatedAt;
         }
@@ -90,11 +95,6 @@ public record StudyDocument(
             return this;
         }
 
-        public StudyDocumentBuilder completed(Boolean completed) {
-            this.completed = completed;
-            return this;
-        }
-
         public StudyDocumentBuilder createdAt(final OffsetDateTime createdAt) {
             this.createdAt = createdAt;
             return this;
@@ -106,6 +106,8 @@ public record StudyDocument(
         }
 
         public StudyDocument build() {
+            var rightQuestions = questions.stream().filter(Question::isCorrect).toList();
+            var completed = rightQuestions.size() == studyDeck.cards().size();
             return new StudyDocument(id, userId, studyDeck, questions, completed, createdAt, updatedAt);
         }
 

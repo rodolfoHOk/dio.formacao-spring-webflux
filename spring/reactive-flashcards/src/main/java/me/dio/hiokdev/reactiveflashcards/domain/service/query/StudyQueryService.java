@@ -45,7 +45,7 @@ public class StudyQueryService {
     public Mono<StudyDocument> verifyIfFinished(final StudyDocument studyDocument){
         return Mono.just(studyDocument)
                 .doFirst(() -> log.info("==== verify if study has some question without right answer"))
-                .filter(study -> BooleanUtils.isFalse(studyDocument.completed()))
+                .filter(study -> BooleanUtils.isFalse(study.completed()))
                 .switchIfEmpty(Mono.defer(() -> Mono.error(new NotFoundException(BaseErrorMessage
                         .STUDY_QUESTION_NOT_FOUND.params(studyDocument.id()).getMessage()))));
     }
