@@ -22,6 +22,7 @@ public interface StudyDomainMapper {
     @Mapping(target = "expected", source = "back")
     Question toQuestion(final StudyCard studyCard);
 
+    @Mapping(target = "question", ignore = true)
     StudyDTO toDTO(final StudyDocument studyDocument, final List<String> remainAsks);
 
     @Mapping(target = "asked", source = "front")
@@ -29,6 +30,7 @@ public interface StudyDomainMapper {
     @Mapping(target = "expected", source = "back")
     QuestionDTO toDTO(final StudyCardDTO studyCard);
 
+    @Mapping(target = "question", ignore = true)
     StudyDocument toDocument(final StudyDTO studyDTO);
 
 }

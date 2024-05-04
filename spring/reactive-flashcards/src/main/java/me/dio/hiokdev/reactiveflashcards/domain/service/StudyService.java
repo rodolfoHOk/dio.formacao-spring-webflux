@@ -57,7 +57,8 @@ public class StudyService {
                 .map(tuple -> studyDomainMapper.toDTO(tuple.getT1(), tuple.getT2()))
                 .flatMap(this::setNewQuestion)
                 .map(studyDomainMapper::toDocument)
-                .flatMap(studyRepository::save);
+                .flatMap(studyRepository::save)
+                .doFirst(() -> log.info("==== Saving answer and next question if have one"));
     }
 
     private Mono<Void> verifyPendingStudy(final StudyDocument studyDocument) {
@@ -90,28 +91,30 @@ public class StudyService {
     private StudyDocument addAnswerToCurrentQuestion(final StudyDocument document, final String answer) {
         var currentQuestion = document.getLastPendingQuestion();
         var questions = document.questions();
-        currentQuestion = currentQuestion.toBuilder().answered(answer).build();
         var currentQuestionIndex = questions.indexOf(currentQuestion);
+        currentQuestion = currentQuestion.toBuilder().answered(answer).build();
         questions.set(currentQuestionIndex, currentQuestion);
         return document.toBuilder().questions(questions).build();
     }
 
     private Mono<List<String>> getNextPossibilities(final StudyDocument studyDocument) {
         return Flux.fromIterable(studyDocument.studyDeck().cards())
+                .doFirst(() -> log.info("==== Getting question not used or questions without right answers"))
                 .map(StudyCard::front)
-                .filter(cardFront -> studyDocument.questions().stream()
+                .filter(cardAsk -> studyDocument.questions().stream()
                         .filter(Question::isCorrect)
                         .map(Question::asked)
-                        .noneMatch(cardFront::equals))
+                        .noneMatch(cardAsk::equals))
                 .collectList()
-                .flatMap(cardsFront -> removeLastAsk(cardsFront, studyDocument.getLastAnsweredQuestion().asked()));
+                .flatMap(cardsAsks -> removeLastAsk(cardsAsks, studyDocument.getLastAnsweredQuestion().asked()));
     }
 
-    private Mono<List<String>> removeLastAsk(List<String> cardsFront, final String lastAsked) {
-        return Mono.just(cardsFront)
+    private Mono<List<String>> removeLastAsk(List<String> cardsAsks, final String lastAsked) {
+        return Mono.just(cardsAsks)
+                .doFirst(() -> log.info("==== Remove last asked question if it is not a last pending question in study"))
                 .filter(asks -> asks.size() == 1)
-                .switchIfEmpty(Mono.defer(() -> Mono.just(cardsFront.stream()
-                        .filter(lastAsked::equals)
+                .switchIfEmpty(Mono.defer(() -> Mono.just(cardsAsks.stream()
+                        .filter(ask -> !ask.equals(lastAsked) )
                         .toList())));
     }
 
@@ -127,6 +130,7 @@ public class StudyService {
 
     private Mono<QuestionDTO> generateNextQuestion(final StudyDTO studyDTO) {
         return Mono.just(studyDTO.remainAsks().get(new Random().nextInt(studyDTO.remainAsks().size())))
+                .doFirst(() -> log.info("==== Select next random question"))
                 .map(ask -> studyDTO.studyDeck().cards().stream()
                         .filter(card -> ask.equals(card.front()))
                         .map(studyDomainMapper::toDTO)

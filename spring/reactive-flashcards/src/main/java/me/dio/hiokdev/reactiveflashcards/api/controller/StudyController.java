@@ -3,7 +3,9 @@ package me.dio.hiokdev.reactiveflashcards.api.controller;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import me.dio.hiokdev.reactiveflashcards.api.controller.request.AnswerQuestionRequest;
 import me.dio.hiokdev.reactiveflashcards.api.controller.request.StudyRequest;
+import me.dio.hiokdev.reactiveflashcards.api.controller.response.AnswerQuestionResponse;
 import me.dio.hiokdev.reactiveflashcards.api.controller.response.QuestionResponse;
 import me.dio.hiokdev.reactiveflashcards.api.controller.response.StudyResponse;
 import me.dio.hiokdev.reactiveflashcards.api.mapper.StudyMapper;
@@ -59,6 +61,18 @@ public class StudyController {
         return studyQueryService.findAllByUserId(userId)
                 .doFirst(() -> log.info("==== Finding all user studies with a follow user id {}", userId))
                 .map(studyMapper::toResponse);
+    }
+
+    @PostMapping(value = "{id}/answer", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public Mono<AnswerQuestionResponse> answer(
+            @PathVariable @Valid @MongoId(message = "{studyController.id}") final String id,
+            @RequestBody @Valid AnswerQuestionRequest requestBody
+    ) {
+        return studyService.answer(id, requestBody.answer())
+                .doFirst(() -> log
+                        .info("==== Try to answer pending question in study {} with {}", id, requestBody.answer()))
+                .map(studyDocument -> studyMapper.toResponse(studyDocument.getLastAnsweredQuestion()));
+
     }
 
 }

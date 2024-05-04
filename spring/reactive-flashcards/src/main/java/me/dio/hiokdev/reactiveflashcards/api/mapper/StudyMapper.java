@@ -1,6 +1,7 @@
 package me.dio.hiokdev.reactiveflashcards.api.mapper;
 
 import me.dio.hiokdev.reactiveflashcards.api.controller.request.StudyRequest;
+import me.dio.hiokdev.reactiveflashcards.api.controller.response.AnswerQuestionResponse;
 import me.dio.hiokdev.reactiveflashcards.api.controller.response.QuestionResponse;
 import me.dio.hiokdev.reactiveflashcards.api.controller.response.StudyResponse;
 import me.dio.hiokdev.reactiveflashcards.domain.document.Question;
@@ -23,5 +24,7 @@ public interface StudyMapper {
     QuestionResponse toResponse(final Question question, final String studyId);
 
     StudyResponse toResponse(final StudyDocument studyDocument);
+
+    AnswerQuestionResponse toResponse(final Question question);
 
 }
