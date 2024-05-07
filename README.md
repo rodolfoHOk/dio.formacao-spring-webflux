@@ -81,6 +81,9 @@
 - Adicionando verificação de email para criação e atualização de usuário
 - Criando endpoint de listagem de deck
 - Criando endpoint de criação de estudo
+- Criando endpoint de busca de pergunta atual do estudo
+- Criando endpoint para responder pergunta do estudo
+- Criando serviço de envio de email
 -
 
 ### Links
