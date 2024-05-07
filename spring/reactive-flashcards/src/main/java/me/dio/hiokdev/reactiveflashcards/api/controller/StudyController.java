@@ -72,7 +72,6 @@ public class StudyController {
                 .doFirst(() -> log
                         .info("==== Try to answer pending question in study {} with {}", id, requestBody.answer()))
                 .map(studyDocument -> studyMapper.toResponse(studyDocument.getLastAnsweredQuestion()));
-
     }
 
 }

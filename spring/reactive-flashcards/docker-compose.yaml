@@ -30,6 +30,12 @@ services:
     volumes:
       - /box
 
+  mailcatcher:
+    image: dockage/mailcatcher:0.9
+    ports:
+      - "1025:1025"
+      - "1080:1080"
+
 volumes:
   db:
   box:
