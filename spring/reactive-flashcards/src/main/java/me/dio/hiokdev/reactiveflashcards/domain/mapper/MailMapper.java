@@ -19,7 +19,7 @@ public interface MailMapper {
     @Mapping(target = "username", source = "user.name")
     @Mapping(target = "destination", source = "user.email")
     @Mapping(target = "subject", constant = "Relatório de estudos")
-    @Mapping(target = "template", defaultValue = "mail/studyResult")
+    @Mapping(target = "template", constant = "mail/studyResult")
     @Mapping(target = "deck", source = "deck")
     @Mapping(target = "questions", source = "study.questions")
     MailMessageDTO toDTO(final StudyDocument study, final DeckDocument deck, final UserDocument user);

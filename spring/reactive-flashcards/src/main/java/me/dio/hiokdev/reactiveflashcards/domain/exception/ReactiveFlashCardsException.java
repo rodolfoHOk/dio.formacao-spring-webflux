@@ -6,4 +6,8 @@ public class ReactiveFlashCardsException extends RuntimeException {
         super(message);
     }
 
+    public ReactiveFlashCardsException(String message, Throwable cause) {
+        super(message, cause);
+    }
+
 }
