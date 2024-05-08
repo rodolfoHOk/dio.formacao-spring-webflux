@@ -56,7 +56,7 @@ public record MailMessageDTO(
 
         public MailMessageDTOBuilder questions(final List<Question> questions) {
             questions.sort(Comparator.comparing(Question::answeredIn));
-            return variables("question", questions);
+            return variables("questions", questions);
         }
 
         public MailMessageDTO build() {

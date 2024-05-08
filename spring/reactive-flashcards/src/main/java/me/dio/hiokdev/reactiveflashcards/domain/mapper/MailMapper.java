@@ -5,6 +5,7 @@ import me.dio.hiokdev.reactiveflashcards.domain.document.DeckDocument;
 import me.dio.hiokdev.reactiveflashcards.domain.document.StudyDocument;
 import me.dio.hiokdev.reactiveflashcards.domain.document.UserDocument;
 import me.dio.hiokdev.reactiveflashcards.domain.dto.MailMessageDTO;
+import me.dio.hiokdev.reactiveflashcards.domain.dto.StudyDTO;
 import org.mapstruct.DecoratedWith;
 import org.mapstruct.InjectionStrategy;
 import org.mapstruct.Mapper;
@@ -22,7 +23,7 @@ public interface MailMapper {
     @Mapping(target = "template", constant = "mail/studyResult")
     @Mapping(target = "deck", source = "deck")
     @Mapping(target = "questions", source = "study.questions")
-    MailMessageDTO toDTO(final StudyDocument study, final DeckDocument deck, final UserDocument user);
+    MailMessageDTO toDTO(final StudyDTO study, final DeckDocument deck, final UserDocument user);
 
     @Mapping(target = "to", expression = "java(new String[]{mailMessageDTO.destination()})")
     @Mapping(target = "from", source = "sender")

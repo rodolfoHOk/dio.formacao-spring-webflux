@@ -11,6 +11,7 @@ import me.dio.hiokdev.reactiveflashcards.domain.dto.StudyDTO;
 import me.dio.hiokdev.reactiveflashcards.domain.exception.BaseErrorMessage;
 import me.dio.hiokdev.reactiveflashcards.domain.exception.DeckInStudyException;
 import me.dio.hiokdev.reactiveflashcards.domain.exception.NotFoundException;
+import me.dio.hiokdev.reactiveflashcards.domain.mapper.MailMapper;
 import me.dio.hiokdev.reactiveflashcards.domain.mapper.StudyDomainMapper;
 import me.dio.hiokdev.reactiveflashcards.domain.repository.StudyRepository;
 import me.dio.hiokdev.reactiveflashcards.domain.service.query.DeckQueryService;
@@ -36,6 +37,8 @@ public class StudyService {
     private final StudyQueryService studyQueryService;
     private final StudyDomainMapper studyDomainMapper;
     private final StudyRepository studyRepository;
+    private final MailService mailService;
+    private final MailMapper mailMapper;
 
     public Mono<StudyDocument> start(final StudyDocument studyDocument) {
         return verifyPendingStudy(studyDocument)
@@ -114,7 +117,7 @@ public class StudyService {
                 .doFirst(() -> log.info("==== Remove last asked question if it is not a last pending question in study"))
                 .filter(asks -> asks.size() == 1)
                 .switchIfEmpty(Mono.defer(() -> Mono.just(cardsAsks.stream()
-                        .filter(ask -> !ask.equals(lastAsked) )
+                        .filter(ask -> !ask.equals(lastAsked))
                         .toList())));
     }
 
@@ -125,7 +128,9 @@ public class StudyService {
                         .STUDY_QUESTION_NOT_FOUND.params(studyDTO.id()).getMessage()))))
                 .flatMap(hasAnyAnswer -> generateNextQuestion(studyDTO))
                 .map(question -> studyDTO.toBuilder().question(question).build())
-                .onErrorResume(NotFoundException.class, e -> Mono.just(studyDTO));
+                .onErrorResume(NotFoundException.class, e -> Mono.just(studyDTO)
+                        .onTerminateDetach()
+                        .doOnSuccess(this::notifyUser));
     }
 
     private Mono<QuestionDTO> generateNextQuestion(final StudyDTO studyDTO) {
@@ -135,6 +140,14 @@ public class StudyService {
                         .filter(card -> ask.equals(card.front()))
                         .map(studyDomainMapper::toDTO)
                         .findFirst().orElseThrow());
+    }
+
+    private void notifyUser(final StudyDTO dto) {
+        userQueryService.findById(dto.userId())
+                .zipWhen(user -> deckQueryService.findById(dto.studyDeck().deckId()))
+                .map(tuple -> mailMapper.toDTO(dto, tuple.getT2(), tuple.getT1()))
+                .flatMap(mailService::send)
+                .subscribe();
     }
 
 }
