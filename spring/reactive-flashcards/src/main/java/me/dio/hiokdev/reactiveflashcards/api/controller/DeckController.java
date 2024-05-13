@@ -42,6 +42,13 @@ public class DeckController {
                 .map(deckMapper::toResponse);
     }
 
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PostMapping(value = "sync")
+    public Mono<Void> sync() {
+        return deckService.sync()
+                .doFirst(() -> log.info("==== Sync decks from External API"));
+    }
+
     @GetMapping(value = "{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<DeckResponse> findById(@PathVariable @Valid @MongoId(message = "{deckController.id}") final String id) {
         return deckQueryService.findById(id)

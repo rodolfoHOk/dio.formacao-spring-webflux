@@ -31,7 +31,7 @@ public class DeckRestQueryService {
     }
 
     public Flux<DeckRestDTO> getDecks() {
-        return authCache.flatMapMany(cache -> doGetDecks(cache.token()));
+        return authCache.flatMapMany(auth -> doGetDecks(auth.token()));
     }
 
     private Flux<DeckRestDTO> doGetDecks(final String token) {
@@ -44,7 +44,7 @@ public class DeckRestQueryService {
 
     private Mono<AuthRestDTO> getAuth() {
         return webClient.post()
-                .uri(deckApiConfig.authResource())
+                .uri(deckApiConfig.getAuthUri())
                 .contentType(MediaType.APPLICATION_JSON)
                 .retrieve()
                 .bodyToMono(AuthRestDTO.class);
