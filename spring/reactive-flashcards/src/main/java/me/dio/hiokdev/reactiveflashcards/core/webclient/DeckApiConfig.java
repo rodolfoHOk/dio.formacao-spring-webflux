@@ -8,4 +8,13 @@ public record DeckApiConfig(
         String authResource,
         String decksResource
 ) {
+
+    public String getAuthUri(){
+        return String.format("%s/%s", baseUrl, authResource);
+    }
+
+    public String getDecksUri(){
+        return String.format("%s/%s", baseUrl, decksResource);
+    }
+
 }
