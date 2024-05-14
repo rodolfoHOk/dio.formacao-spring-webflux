@@ -38,7 +38,7 @@ public class UserRepositoryImpl {
 
     private Mono<Query> buildWhere(final Query query, final String sentence) {
         return Mono.just(query)
-                .filter(q -> StringUtils.isNoneBlank(sentence))
+                .filter(q -> StringUtils.isBlank(sentence))
                 .switchIfEmpty(Mono.defer(() -> Mono.just(query))
                         .flatMapIterable(q -> List.of("name", "email"))
                         .map(field -> Criteria.where(field).regex(sentence, "i"))

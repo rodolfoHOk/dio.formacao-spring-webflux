@@ -7,8 +7,8 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum UserSortBy {
 
-    Name("name"),
-    Email("email");
+    NAME("name"),
+    EMAIL("email");
 
     private final String field;
 

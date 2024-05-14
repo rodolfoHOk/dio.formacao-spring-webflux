@@ -5,9 +5,8 @@ import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.PositiveOrZero;
 import lombok.Builder;
+import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.data.domain.Sort;
-
-import java.util.Objects;
 
 public record UserPageRequest(
         @JsonProperty("sentence") String sentence,
@@ -19,10 +18,11 @@ public record UserPageRequest(
 
     @Builder(toBuilder = true)
     public UserPageRequest {
-        if (Objects.isNull(sortBy)) sortBy = UserSortBy.Name;
-        if (Objects.isNull(sortDirection)) sortDirection = UserSortDirection.ASC;
-        if (Objects.isNull(limit)) limit = 20;
-        if (Objects.isNull(page)) page = 0L;
+        sentence = ObjectUtils.defaultIfNull(sentence, "");
+        sortBy = ObjectUtils.defaultIfNull(sortBy, UserSortBy.NAME);
+        sortDirection = ObjectUtils.defaultIfNull(sortDirection, UserSortDirection.ASC);
+        limit = ObjectUtils.defaultIfNull(limit, 20);
+        page = ObjectUtils.defaultIfNull(page, 0L);
     }
 
     public Sort getSort() {
