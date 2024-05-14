@@ -1,16 +1,17 @@
 package me.dio.hiokdev.reactiveflashcards.api.controller.request;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Builder;
 import org.springframework.data.domain.Sort;
 
 import java.util.Objects;
 
 public record UserPageRequest(
-        String sentence,
-        Long page,
-        Integer limit,
-        UserSortBy sortBy,
-        UserSortDirection sortDirection
+        @JsonProperty("sentence") String sentence,
+        @JsonProperty("page") Long page,
+        @JsonProperty("limit") Integer limit,
+        @JsonProperty("sortBy") UserSortBy sortBy,
+        @JsonProperty("sortDirection") UserSortDirection sortDirection
 ) {
 
     @Builder(toBuilder = true)

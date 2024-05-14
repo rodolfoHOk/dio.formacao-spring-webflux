@@ -1,13 +1,15 @@
 package me.dio.hiokdev.reactiveflashcards.api.controller.response;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Builder;
 
 public record ErrorFieldResponse(
-    String name,
-    String message
+        @JsonProperty("name") String name,
+        @JsonProperty("message") String message
 ) {
 
     @Builder(toBuilder = true)
-    public ErrorFieldResponse {}
+    public ErrorFieldResponse {
+    }
 
 }

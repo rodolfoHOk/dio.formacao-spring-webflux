@@ -3,7 +3,9 @@ package me.dio.hiokdev.reactiveflashcards.api.controller;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import me.dio.hiokdev.reactiveflashcards.api.controller.request.UserPageRequest;
 import me.dio.hiokdev.reactiveflashcards.api.controller.request.UserRequest;
+import me.dio.hiokdev.reactiveflashcards.api.controller.response.UserPageResponse;
 import me.dio.hiokdev.reactiveflashcards.api.controller.response.UserResponse;
 import me.dio.hiokdev.reactiveflashcards.api.mapper.UserMapper;
 import me.dio.hiokdev.reactiveflashcards.core.validation.MongoId;
@@ -41,6 +43,13 @@ public class UserController {
         return userService.save(userMapper.toDocument(requestBody))
                 .doFirst(() -> log.info("==== Saving a user with follow data {}", requestBody))
                 .map(userMapper::toResponse);
+    }
+
+    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    public Mono<UserPageResponse> findOnDemand(@Valid final UserPageRequest request) {
+        return userQueryService.findOnDemand(request)
+                .doFirst(() -> log.info("==== Finding users on demand with follow request {}", request))
+                .map(userPageDocument -> userMapper.toResponse(userPageDocument, request.limit()));
     }
 
     @GetMapping(value = "{id}", produces = MediaType.APPLICATION_JSON_VALUE)
