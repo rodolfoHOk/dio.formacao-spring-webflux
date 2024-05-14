@@ -2,7 +2,6 @@ package me.dio.hiokdev.reactiveflashcards.domain.mapper;
 
 import jakarta.mail.MessagingException;
 import me.dio.hiokdev.reactiveflashcards.domain.document.DeckDocument;
-import me.dio.hiokdev.reactiveflashcards.domain.document.StudyDocument;
 import me.dio.hiokdev.reactiveflashcards.domain.document.UserDocument;
 import me.dio.hiokdev.reactiveflashcards.domain.dto.MailMessageDTO;
 import me.dio.hiokdev.reactiveflashcards.domain.dto.StudyDTO;
