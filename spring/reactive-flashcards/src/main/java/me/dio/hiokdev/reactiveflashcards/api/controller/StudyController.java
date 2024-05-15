@@ -3,6 +3,7 @@ package me.dio.hiokdev.reactiveflashcards.api.controller;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import me.dio.hiokdev.reactiveflashcards.api.controller.documentation.StudyControllerDoc;
 import me.dio.hiokdev.reactiveflashcards.api.controller.request.AnswerQuestionRequest;
 import me.dio.hiokdev.reactiveflashcards.api.controller.request.StudyRequest;
 import me.dio.hiokdev.reactiveflashcards.api.controller.response.AnswerQuestionResponse;
@@ -12,6 +13,7 @@ import me.dio.hiokdev.reactiveflashcards.api.mapper.StudyMapper;
 import me.dio.hiokdev.reactiveflashcards.core.validation.MongoId;
 import me.dio.hiokdev.reactiveflashcards.domain.service.StudyService;
 import me.dio.hiokdev.reactiveflashcards.domain.service.query.StudyQueryService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
@@ -29,13 +31,14 @@ import reactor.core.publisher.Mono;
 @Validated
 @RestController
 @RequestMapping("studies")
-@RequiredArgsConstructor
-public class StudyController {
+@RequiredArgsConstructor(onConstructor_ = @__(@Autowired))
+public class StudyController implements StudyControllerDoc {
 
     private final StudyService studyService;
     private final StudyQueryService studyQueryService;
     private final StudyMapper studyMapper;
 
+    @Override
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<QuestionResponse> start(@RequestBody @Valid final StudyRequest requestBody) {
@@ -45,6 +48,7 @@ public class StudyController {
                         .toResponse(studyDocument.getLastPendingQuestion(), studyDocument.id()));
     }
 
+    @Override
     @GetMapping(value = "{id}/current-question", produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<QuestionResponse> getCurrentQuestion(
             @PathVariable @Valid @MongoId(message = "{studyController.id}") final String id
@@ -54,6 +58,7 @@ public class StudyController {
                 .map(question -> studyMapper.toResponse(question, id));
     }
 
+    @Override
     @GetMapping(value = "user/{userId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public Flux<StudyResponse> listByUserId(
             @PathVariable @Valid @MongoId(message = "{userController.id}") final String userId
@@ -63,6 +68,8 @@ public class StudyController {
                 .map(studyMapper::toResponse);
     }
 
+    @Override
+    @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(value = "{id}/answer", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<AnswerQuestionResponse> answer(
             @PathVariable @Valid @MongoId(message = "{studyController.id}") final String id,

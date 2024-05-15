@@ -3,6 +3,7 @@ package me.dio.hiokdev.reactiveflashcards.api.controller;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import me.dio.hiokdev.reactiveflashcards.api.controller.documentation.UserControllerDoc;
 import me.dio.hiokdev.reactiveflashcards.api.controller.request.UserPageRequest;
 import me.dio.hiokdev.reactiveflashcards.api.controller.request.UserRequest;
 import me.dio.hiokdev.reactiveflashcards.api.controller.response.UserPageResponse;
@@ -31,12 +32,13 @@ import reactor.core.publisher.Mono;
 @RestController
 @RequestMapping("users")
 @RequiredArgsConstructor(onConstructor_ = @__(@Autowired))
-public class UserController {
+public class UserController implements UserControllerDoc {
 
     private final UserService userService;
     private final UserQueryService userQueryService;
     private final UserMapper userMapper;
 
+    @Override
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<UserResponse> save(@Valid @RequestBody final UserRequest requestBody) {
@@ -45,6 +47,7 @@ public class UserController {
                 .map(userMapper::toResponse);
     }
 
+    @Override
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<UserPageResponse> findOnDemand(@Valid final UserPageRequest request) {
         return userQueryService.findOnDemand(request)
@@ -52,6 +55,7 @@ public class UserController {
                 .map(userPageDocument -> userMapper.toResponse(userPageDocument, request.limit()));
     }
 
+    @Override
     @GetMapping(value = "{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<UserResponse> findById(@PathVariable @Valid @MongoId(message = "{userController.id}") final String id) {
         return userQueryService.findById(id)
@@ -59,6 +63,7 @@ public class UserController {
                 .map(userMapper::toResponse);
     }
 
+    @Override
     @PutMapping(value = "{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<UserResponse> update(
             @PathVariable @Valid @MongoId(message = "{userController.id}") final String id,
@@ -69,6 +74,7 @@ public class UserController {
                 .map(userMapper::toResponse);
     }
 
+    @Override
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping(value = "{id}")
     public Mono<Void> delete(@PathVariable @Valid @MongoId(message = "{userController.id}") final String id) {

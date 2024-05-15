@@ -3,6 +3,7 @@ package me.dio.hiokdev.reactiveflashcards.api.controller;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import me.dio.hiokdev.reactiveflashcards.api.controller.documentation.DeckControllerDoc;
 import me.dio.hiokdev.reactiveflashcards.api.controller.request.DeckRequest;
 import me.dio.hiokdev.reactiveflashcards.api.controller.response.DeckResponse;
 import me.dio.hiokdev.reactiveflashcards.api.mapper.DeckMapper;
@@ -30,12 +31,13 @@ import reactor.core.publisher.Mono;
 @RestController
 @RequestMapping("decks")
 @RequiredArgsConstructor(onConstructor_ = @__(@Autowired))
-public class DeckController {
+public class DeckController implements DeckControllerDoc {
 
     public final DeckService deckService;
     public final DeckQueryService deckQueryService;
     private final DeckMapper deckMapper;
 
+    @Override
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<DeckResponse> save(@Valid @RequestBody final DeckRequest requestBody) {
@@ -44,6 +46,7 @@ public class DeckController {
                 .map(deckMapper::toResponse);
     }
 
+    @Override
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PostMapping(value = "sync")
     public Mono<Void> sync() {
@@ -51,6 +54,7 @@ public class DeckController {
                 .doFirst(() -> log.info("==== Sync decks from External API"));
     }
 
+    @Override
     @GetMapping(value = "{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<DeckResponse> findById(@PathVariable @Valid @MongoId(message = "{deckController.id}") final String id) {
         return deckQueryService.findById(id)
@@ -58,6 +62,7 @@ public class DeckController {
                 .map(deckMapper::toResponse);
     }
 
+    @Override
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public Flux<DeckResponse> findAll() {
         return deckQueryService.findAll()
@@ -65,6 +70,7 @@ public class DeckController {
                 .map(deckMapper::toResponse);
     }
 
+    @Override
     @PutMapping(value = "{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<DeckResponse> update(
             @PathVariable @Valid @MongoId(message = "{deckController.id}") final String id,
@@ -75,6 +81,7 @@ public class DeckController {
                 .map(deckMapper::toResponse);
     }
 
+    @Override
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping(value = "{id}")
     public Mono<Void> delete(@PathVariable @Valid @MongoId(message = "{deckController.id}") final String id) {
