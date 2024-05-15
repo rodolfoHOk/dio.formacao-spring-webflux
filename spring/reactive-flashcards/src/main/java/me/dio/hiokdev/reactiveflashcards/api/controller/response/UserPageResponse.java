@@ -1,16 +1,28 @@
 package me.dio.hiokdev.reactiveflashcards.api.controller.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
 
 public record UserPageResponse(
-        @JsonProperty("currentPage") Long currentPage,
-        @JsonProperty("totalPages") Long totalPages,
-        @JsonProperty("totalItens") Long totalItens,
-        @JsonProperty("content") List<UserResponse> content
+        @JsonProperty("currentPage")
+        @Schema(description = "Pagina retornada", example = "1")
+        Long currentPage,
+
+        @JsonProperty("totalPages")
+        @Schema(description = "Total de páginas", example = "20")
+        Long totalPages,
+
+        @JsonProperty("totalItens")
+        @Schema(description = "Quantidade de registros paginados", example = "100")
+        Long totalItens,
+
+        @JsonProperty("content")
+        @Schema(description = "Dados dos usuários da página")
+        List<UserResponse> content
 ) {
 
     public static UserPageResponseBuilder builder() {

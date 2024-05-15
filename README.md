@@ -84,7 +84,23 @@
 - Criando endpoint de busca de pergunta atual do estudo
 - Criando endpoint para responder pergunta do estudo
 - Criando serviço de envio de email
+- Usando serviço de envio de email ao terminar um estudo
+- Criando web client config
+- Criando serviço para consumir API externa para buscar decks de estudo e persistir os dados
+- Configurando o cache de token da API externa
+- Criando do endpoint de sync dos decks
+- Criando endpoints de atualização e exclusão de decks
+- Criando query de busca de usuários por demanda/paginada na camada de repository
+- Criando serviço de busca de usuários por demanda/paginada
+- Criando endpoint de busca de usuários por demanda/paginada
+- Configurando SpringDoc
+- Documentando requests e responses
+- Documentando endpoints
 -
+
+### OpenApi Document
+
+- http://localhost:8080/reactive-flashcards/webjars/swagger-ui/index.html
 
 ### Links
 
