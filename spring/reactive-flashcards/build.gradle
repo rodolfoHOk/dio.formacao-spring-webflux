@@ -60,6 +60,8 @@ dependencies {
 }
 
 tasks.named('test') {
+	jvmArgs '-Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=*:5005'
+
 	useJUnitPlatform()
 
 	testlogger{
@@ -77,4 +79,8 @@ tasks.named('test') {
 	}
 
 	finalizedBy jacocoTestReport
+}
+
+bootRun{
+	jvmArgs '-Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=*:5005'
 }
