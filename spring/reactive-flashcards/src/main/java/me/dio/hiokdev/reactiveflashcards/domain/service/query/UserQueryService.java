@@ -3,7 +3,6 @@ package me.dio.hiokdev.reactiveflashcards.domain.service.query;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.dio.hiokdev.reactiveflashcards.api.controller.request.UserPageRequest;
-import me.dio.hiokdev.reactiveflashcards.api.controller.request.UserRequest;
 import me.dio.hiokdev.reactiveflashcards.domain.document.UserDocument;
 import me.dio.hiokdev.reactiveflashcards.domain.dto.UserPageDocument;
 import me.dio.hiokdev.reactiveflashcards.domain.exception.BaseErrorMessage;

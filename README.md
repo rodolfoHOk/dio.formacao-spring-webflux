@@ -96,6 +96,10 @@
 - Configurando SpringDoc
 - Documentando requests e responses
 - Documentando endpoints
+- Testes: Configurações de dependências, application-test.yaml e docker
+- Testes: Criando bot factories para testes
+- Testes: Criando deck service test
+- Testes: Criando deck query service test
 -
 
 ### OpenApi Document
