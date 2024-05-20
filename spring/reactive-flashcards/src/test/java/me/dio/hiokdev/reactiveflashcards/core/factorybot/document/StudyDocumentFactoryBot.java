@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import me.dio.hiokdev.reactiveflashcards.core.factorybot.RandomData;
 import me.dio.hiokdev.reactiveflashcards.domain.document.DeckDocument;
 import me.dio.hiokdev.reactiveflashcards.domain.document.Question;
+import me.dio.hiokdev.reactiveflashcards.domain.document.StudyCard;
 import me.dio.hiokdev.reactiveflashcards.domain.document.StudyDeck;
 import me.dio.hiokdev.reactiveflashcards.domain.document.StudyDocument;
 import org.bson.types.ObjectId;
@@ -13,6 +14,8 @@ import org.bson.types.ObjectId;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
+import java.util.stream.Collectors;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class StudyDocumentFactoryBot {
@@ -40,6 +43,26 @@ public class StudyDocumentFactoryBot {
             this.updatedAt = OffsetDateTime.now();
         }
 
+//        public StudyDocumentFactoryBotBuilder preInsert() {
+//            this.id = null;
+//            this.createdAt = null;
+//            this.updatedAt = null;
+//            generateNonAskedRandomQuestion();
+//            return this;
+//        }
+
+        public StudyDocumentFactoryBotBuilder finishedStudy() {
+            this.questions.clear();
+            studyDeck.cards().forEach(card -> {
+                questions.add(Question.builder()
+                        .asked(card.front())
+                        .expected(card.back())
+                        .answered(card.back())
+                        .build());
+            });
+            return this;
+        }
+
         public StudyDocument build() {
             return StudyDocument.builder()
                     .id(id)
@@ -52,12 +75,57 @@ public class StudyDocumentFactoryBot {
         }
 
         private StudyDeck generateStudyDeck(final DeckDocument deck) {
-            // TODO studyCards from deck cards and add in builder
-            return StudyDeck.builder().deckId(deck.id()).build();
+            var studyCards = deck.cards().stream()
+                    .map(card -> StudyCard.builder()
+                            .front(card.front())
+                            .back(card.back())
+                            .build())
+                    .collect(Collectors.toSet());
+            return StudyDeck.builder()
+                    .deckId(deck.id())
+                    .cards(studyCards)
+                    .build();
         }
 
         private void generateQuestions() {
-            // TODO generateQuestions
+            generateRandomQuestionWithWrongAnswer();
+            generateRandomQuestionWithRightAnswer();
+            generateNonAskedRandomQuestion();
+        }
+
+        private void generateRandomQuestionWithWrongAnswer() {
+            var values = new ArrayList<>(studyDeck.cards());
+            var random = new Random();
+            var position = random.nextInt(values.size());
+            var card = values.get(position);
+            questions.add(Question.builder()
+                    .asked(card.front())
+                    .answered(faker.app().name())
+                    .expected(card.back())
+                    .build());
+        }
+
+        private void generateRandomQuestionWithRightAnswer() {
+            var values = new ArrayList<>(studyDeck.cards());
+            var random = new Random();
+            var position = random.nextInt(values.size());
+            var card = values.get(position);
+            questions.add(Question.builder()
+                    .asked(card.front())
+                    .answered(card.back())
+                    .expected(card.back())
+                    .build());
+        }
+
+        private void generateNonAskedRandomQuestion() {
+            var values = new ArrayList<>(studyDeck.cards());
+            var random = new Random();
+            var position = random.nextInt(values.size());
+            var card = values.get(position);
+            questions.add(Question.builder()
+                    .asked(card.front())
+                    .expected(card.back())
+                    .build());
         }
 
     }
