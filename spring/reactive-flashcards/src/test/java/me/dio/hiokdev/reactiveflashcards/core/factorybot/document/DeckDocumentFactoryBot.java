@@ -63,13 +63,23 @@ public class DeckDocumentFactoryBot {
         }
 
         private void generateCards() {
-            cards.addAll(Stream.generate(() -> Card.builder()
-                            .front(faker.cat().name())
-                            .back(faker.color().name())
-                            .build()
-                    )
-                    .limit(faker.number().numberBetween(3, 8))
-                    .toList());
+            var amount = faker.number().numberBetween(3, 8);
+            Set<String> front = new HashSet<>();
+            while (front.size() != amount){
+                front.add(faker.cat().name());
+            }
+            Set<String> back = new HashSet<>();
+            while (back.size() != amount){
+                back.add(faker.color().name());
+            }
+            var frontList = front.stream().toList();
+            var backList = back.stream().toList();
+            for (int i = 0; i < frontList.size(); i++) {
+                cards.add(Card.builder()
+                        .front(frontList.get(i))
+                        .back(backList.get(i))
+                        .build());
+            }
         }
 
     }

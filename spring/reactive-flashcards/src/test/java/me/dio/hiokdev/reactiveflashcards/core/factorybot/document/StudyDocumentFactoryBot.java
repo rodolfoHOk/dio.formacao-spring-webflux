@@ -43,13 +43,32 @@ public class StudyDocumentFactoryBot {
             this.updatedAt = OffsetDateTime.now();
         }
 
-//        public StudyDocumentFactoryBotBuilder preInsert() {
-//            this.id = null;
-//            this.createdAt = null;
-//            this.updatedAt = null;
-//            generateNonAskedRandomQuestion();
-//            return this;
-//        }
+        public StudyDocumentFactoryBotBuilder pendingQuestions(final Integer remain) {
+            this.questions.clear();
+            studyDeck.cards().forEach(card -> {
+                questions.add(Question.builder()
+                        .asked(card.front())
+                        .expected(card.back())
+                        .answered(card.back())
+                        .build());
+            });
+            var index = questions.size() - remain;
+            while (index < questions.size()) {
+                var selectedQuestion = questions.get(index);
+                selectedQuestion = Question.builder()
+                        .asked(selectedQuestion.asked())
+                        .expected(selectedQuestion.expected())
+                        .build();
+                questions.set(index, selectedQuestion);
+                ++index;
+            }
+            var positionsToRemove = remain - 1;
+            while (positionsToRemove != 0){
+                questions.remove(questions.size() - positionsToRemove);
+                --positionsToRemove;
+            }
+            return this;
+        }
 
         public StudyDocumentFactoryBotBuilder finishedStudy() {
             this.questions.clear();
