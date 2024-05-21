@@ -41,11 +41,6 @@ public record MailMessageDTO(
             return this;
         }
 
-        private MailMessageDTOBuilder variables(final String key, final Object value) {
-            this.variables.put(key, value);
-            return this;
-        }
-
         public MailMessageDTOBuilder username(final String username) {
             return variables("username", username);
         }
@@ -61,6 +56,11 @@ public record MailMessageDTO(
 
         public MailMessageDTO build() {
             return new MailMessageDTO(destination, subject, template, variables);
+        }
+
+        private MailMessageDTOBuilder variables(final String key, final Object value) {
+            this.variables.put(key, value);
+            return this;
         }
 
     }

@@ -46,15 +46,15 @@ public class MailServerExtension implements BeforeEachCallback, AfterEachCallbac
 
     @Override
     public boolean supportsParameter(ParameterContext parameterContext, ExtensionContext extensionContext) throws ParameterResolutionException {
-        return parameterContext.getParameter().isAnnotationPresent(MainSender.class) ||
-                parameterContext.getParameter().isAnnotationPresent(MainServer.class);
+        return parameterContext.getParameter().isAnnotationPresent(MailServer.class) ||
+                parameterContext.getParameter().isAnnotationPresent(MailSender.class);
     }
 
     @Override
     public Object resolveParameter(ParameterContext parameterContext, ExtensionContext extensionContext) throws ParameterResolutionException {
-        if (parameterContext.getParameter().isAnnotationPresent(MainSender.class)) {
+        if (parameterContext.getParameter().isAnnotationPresent(MailServer.class)) {
             return smtpServer;
-        } else if (parameterContext.getParameter().isAnnotationPresent(MainServer.class)) {
+        } else if (parameterContext.getParameter().isAnnotationPresent(MailSender.class)) {
             return createSender();
         } else {
             return null;
