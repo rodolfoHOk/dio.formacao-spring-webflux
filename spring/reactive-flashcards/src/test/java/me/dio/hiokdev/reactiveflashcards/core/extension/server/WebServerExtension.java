@@ -1,7 +1,6 @@
 package me.dio.hiokdev.reactiveflashcards.core.extension.server;
 
 import lombok.extern.slf4j.Slf4j;
-import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
 import org.junit.jupiter.api.extension.AfterEachCallback;
 import org.junit.jupiter.api.extension.BeforeEachCallback;
@@ -14,14 +13,12 @@ import org.junit.jupiter.api.extension.ParameterResolver;
 public class WebServerExtension implements BeforeEachCallback, AfterEachCallback, ParameterResolver {
 
     private MockWebServer mockWebServer;
-    private MockResponse mockResponse;
 
     @Override
     public void beforeEach(ExtensionContext extensionContext) throws Exception {
         try {
             log.info("=== Starting mock web server");
             mockWebServer = new MockWebServer();
-            mockResponse = new MockResponse();
             mockWebServer.start();
         } catch (Exception exception) {
             log.warn("==== ERROR - Can't start mock web server", exception);
@@ -40,16 +37,13 @@ public class WebServerExtension implements BeforeEachCallback, AfterEachCallback
 
     @Override
     public boolean supportsParameter(ParameterContext parameterContext, ExtensionContext extensionContext) throws ParameterResolutionException {
-        return parameterContext.getParameter().isAnnotationPresent(WebServer.class) ||
-                parameterContext.getParameter().isAnnotationPresent(Response.class);
+        return parameterContext.getParameter().isAnnotationPresent(WebServer.class);
     }
 
     @Override
     public Object resolveParameter(ParameterContext parameterContext, ExtensionContext extensionContext) throws ParameterResolutionException {
         if (parameterContext.getParameter().isAnnotationPresent(WebServer.class)) {
             return mockWebServer;
-        } else if (parameterContext.getParameter().isAnnotationPresent(Response.class)) {
-            return mockResponse;
         } else {
             return null;
         }

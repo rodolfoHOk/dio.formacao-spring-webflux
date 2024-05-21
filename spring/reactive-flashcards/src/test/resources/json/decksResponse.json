@@ -1,0 +1,24 @@
+[
+  {
+    "name": "Estudo de Inglês",
+    "info": "Estudo básico de Inglês",
+    "author": "João",
+    "cards": [
+      {
+        "ask": "Ball",
+        "answer": "Bola"
+      }
+    ]
+  },
+  {
+    "name": "Estudo de Inglês avançado",
+    "info": "Estudo mais avançado de Inglês",
+    "author": "Maria",
+    "cards": [
+      {
+        "ask": "Book",
+        "answer": "Livro"
+      }
+    ]
+  }
+]
