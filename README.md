@@ -100,6 +100,17 @@
 - Testes: Criando bot factories para testes
 - Testes: Criando deck service test
 - Testes: Criando deck query service test
+- Testes: Criando user service test
+- Testes: Criando user query service test
+- Testes: Criando study query service test
+- Testes: Criando no study service test o start test
+- Testes: Criando no study service test o answer test
+- Testes: Criando extensões do JUnit5 para teste mocks da API Rest e do Mail Server
+- Testes: Criando deck rest query service test
+- Testes: Criando mail service test
+- Testes: Criando embedded mongo db config para teste de repository
+- Testes: Criando request builders para teste de controllers
+- Testes: Criando user repository impl test
 -
 
 ### OpenApi Document

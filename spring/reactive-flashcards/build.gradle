@@ -50,9 +50,6 @@ dependencies {
 
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'io.projectreactor:reactor-test'
-	testImplementation 'de.flapdoodle.embed:de.flapdoodle.embed.mongo:4.13.1'
-	testImplementation 'org.mongodb:mongodb-driver-sync'
-	testImplementation 'org.mongodb:bson'
 	testImplementation ('com.github.javafaker:javafaker:1.0.2') { exclude module: 'snakeyaml' }
 	testImplementation group: 'org.yaml', name: 'snakeyaml', version: '2.2'
 	testImplementation 'org.projectlombok:lombok'

@@ -1,9 +1,18 @@
 spring:
-  mongodb:
-    embedded:
-      version: 7.0.9
   data:
     mongodb:
-      port: 27017
-      host: localhost
-      database: reactive-flashcards
+      uri: mongodb://reactive-flashcards:reactive-flashcards@localhost:27017/reactive-flashcards-test?authSource=admin
+#      uri: mongodb://reactive-flashcards:reactive-flashcards@db:27017/reactive-flashcards-test?authSource=admin # for run testing in container
+#      port: 27017
+#      host: localhost
+#      database: reactive-flashcards-test
+
+#  mongodb:
+#    embedded:
+#      version: 7.0.1
+
+#de:
+#  flapdoodle:
+#    mongodb:
+#      embedded:
+#        version: 7.0.1
