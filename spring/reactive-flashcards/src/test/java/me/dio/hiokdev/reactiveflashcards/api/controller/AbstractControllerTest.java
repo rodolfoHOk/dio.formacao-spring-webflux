@@ -34,6 +34,6 @@ public abstract class AbstractControllerTest {
     @Autowired
     protected ApplicationContext applicationContext;
 
-    protected final Faker faker = RandomData.getFaker();
+    protected final static Faker faker = RandomData.getFaker();
 
 }
