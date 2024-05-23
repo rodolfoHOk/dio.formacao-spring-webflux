@@ -1,13 +1,13 @@
-package me.dio.hiokdev.reactiveflashcards.api.controller.deck;
+package me.dio.hiokdev.reactiveflashcards.api.controller.user;
 
 import me.dio.hiokdev.reactiveflashcards.api.controller.AbstractControllerTest;
-import me.dio.hiokdev.reactiveflashcards.api.controller.DeckController;
+import me.dio.hiokdev.reactiveflashcards.api.controller.UserController;
 import me.dio.hiokdev.reactiveflashcards.api.controller.response.ErrorFieldResponse;
 import me.dio.hiokdev.reactiveflashcards.api.controller.response.ProblemResponse;
-import me.dio.hiokdev.reactiveflashcards.api.mapper.DeckMapperImpl;
+import me.dio.hiokdev.reactiveflashcards.api.mapper.UserMapperImpl;
 import me.dio.hiokdev.reactiveflashcards.domain.exception.NotFoundException;
-import me.dio.hiokdev.reactiveflashcards.domain.service.DeckService;
-import me.dio.hiokdev.reactiveflashcards.domain.service.query.DeckQueryService;
+import me.dio.hiokdev.reactiveflashcards.domain.service.UserService;
+import me.dio.hiokdev.reactiveflashcards.domain.service.query.UserQueryService;
 import me.dio.hiokdev.reactiveflashcards.utils.request.RequestBuilder;
 import org.bson.types.ObjectId;
 import org.junit.jupiter.api.BeforeEach;
@@ -22,29 +22,29 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
-@WebFluxTest(DeckController.class)
-@ContextConfiguration(classes = {DeckMapperImpl.class})
-public class DeckControllerDeleteTest extends AbstractControllerTest {
+@WebFluxTest(UserController.class)
+@ContextConfiguration(classes = {UserMapperImpl.class})
+public class UserControllerDeleteTest extends AbstractControllerTest {
 
     @MockBean
-    public DeckService deckService;
+    private UserService userService;
     @MockBean
-    public DeckQueryService deckQueryService;
+    private UserQueryService userQueryService;
     private RequestBuilder<Void> noContentRequestBuilder;
     private RequestBuilder<ProblemResponse> problemResponseRequestBuilder;
 
     @BeforeEach
     void setup() {
         noContentRequestBuilder = RequestBuilder
-                .noContentRequestBuilder(applicationContext, "/decks");
+                .noContentRequestBuilder(applicationContext, "/users");
         problemResponseRequestBuilder = RequestBuilder
-                .problemResponseRequestBuilder(applicationContext, "/decks");
+                .problemResponseRequestBuilder(applicationContext, "/users");
     }
 
     @Test
     void deleteTest() {
         var deckId = ObjectId.get().toString();
-        when(deckService.delete(anyString())).thenReturn(Mono.empty());
+        when(userService.delete(anyString())).thenReturn(Mono.empty());
         noContentRequestBuilder.uri(uriBuilder -> uriBuilder.pathSegment("{id}").build(deckId))
                 .generateRequestWithoutBody()
                 .doDelete()
@@ -52,9 +52,9 @@ public class DeckControllerDeleteTest extends AbstractControllerTest {
     }
 
     @Test
-    void whenTryToDeleteNonStoredDeckThenReturnNotFound() {
+    void whenTryToDeleteNonStoredUserThenReturnNotFound() {
         var deckId = ObjectId.get().toString();
-        when(deckService.delete(anyString())).thenReturn(Mono.error(new NotFoundException("")));
+        when(userService.delete(anyString())).thenReturn(Mono.error(new NotFoundException("")));
         problemResponseRequestBuilder.uri(uriBuilder -> uriBuilder.pathSegment("{id}").build(deckId))
                 .generateRequestWithSimpleBody()
                 .doDelete()
