@@ -15,8 +15,8 @@ public class UserPageRequestFactoryBot {
     public static class UserPageRequestFactoryBotBuilder {
 
         private final String sentence;
-        private final Long page;
-        private final Integer limit;
+        private Long page;
+        private Integer limit;
         private final UserSortBy sortBy;
         private final UserSortDirection sortDirection;
         private final Faker faker = RandomData.getFaker();
@@ -27,6 +27,21 @@ public class UserPageRequestFactoryBot {
             this.limit = faker.number().numberBetween(20, 40);
             this.sortBy = RandomData.randomEnum(UserSortBy.class);
             this.sortDirection = RandomData.randomEnum(UserSortDirection.class);
+        }
+
+        public UserPageRequestFactoryBotBuilder negativePage() {
+            this.page = faker.number().numberBetween(Long.MIN_VALUE, 0);
+            return this;
+        }
+
+        public UserPageRequestFactoryBotBuilder lessThanZeroLimit() {
+            this.limit = faker.number().numberBetween(Integer.MIN_VALUE, 1);
+            return this;
+        }
+
+        public UserPageRequestFactoryBotBuilder greaterThanFiftyLimit() {
+            this.limit = faker.number().numberBetween(51, Integer.MAX_VALUE);
+            return this;
         }
 
         public UserPageRequest build(){
