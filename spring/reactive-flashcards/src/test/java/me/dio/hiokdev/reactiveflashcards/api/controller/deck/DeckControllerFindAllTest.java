@@ -46,13 +46,13 @@ public class DeckControllerFindAllTest extends AbstractControllerTest {
         var decks = Stream.generate(() -> DeckDocumentFactoryBot.builder().build())
                 .limit(faker.number().randomDigitNotZero())
                 .toList();
-        Consumer<List<DeckResponse>> assertNonEmpty = deckResponses -> {
-            assertThat(deckResponses).isNotNull();
-            assertThat(deckResponses).isNotEmpty();
+        Consumer<List<DeckResponse>> assertNonEmpty = response -> {
+            assertThat(response).isNotNull();
+            assertThat(response).isNotEmpty();
         };
-        Consumer<List<DeckResponse>> assertEmpty = deckResponses -> {
-            assertThat(deckResponses).isNotNull();
-            assertThat(deckResponses).isEmpty();
+        Consumer<List<DeckResponse>> assertEmpty = response -> {
+            assertThat(response).isNotNull();
+            assertThat(response).isEmpty();
         };
 
         return Stream.of(

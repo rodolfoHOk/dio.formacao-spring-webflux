@@ -59,9 +59,9 @@ public class DeckControllerDeleteTest extends AbstractControllerTest {
                 .generateRequestWithSimpleBody()
                 .doDelete()
                 .httpStatusIsNotFound()
-                .assertBody(actual ->{
-                    assertThat(actual).isNotNull();
-                    assertThat(actual.status()).isEqualTo(HttpStatus.NOT_FOUND.value());
+                .assertBody(response ->{
+                    assertThat(response).isNotNull();
+                    assertThat(response.status()).isEqualTo(HttpStatus.NOT_FOUND.value());
                 });
     }
 
@@ -73,10 +73,10 @@ public class DeckControllerDeleteTest extends AbstractControllerTest {
                 .generateRequestWithSimpleBody()
                 .doDelete()
                 .httpStatusIsBadRequest()
-                .assertBody(actual ->{
-                    assertThat(actual).isNotNull();
-                    assertThat(actual.status()).isEqualTo(HttpStatus.BAD_REQUEST.value());
-                    assertThat(actual.fields().stream().map(ErrorFieldResponse::name).toList()).contains("id");
+                .assertBody(response ->{
+                    assertThat(response).isNotNull();
+                    assertThat(response.status()).isEqualTo(HttpStatus.BAD_REQUEST.value());
+                    assertThat(response.fields().stream().map(ErrorFieldResponse::name).toList()).contains("id");
                 });
     }
 
