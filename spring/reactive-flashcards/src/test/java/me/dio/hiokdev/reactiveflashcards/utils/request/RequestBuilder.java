@@ -1,6 +1,12 @@
 package me.dio.hiokdev.reactiveflashcards.utils.request;
 
+import me.dio.hiokdev.reactiveflashcards.api.controller.response.AnswerQuestionResponse;
+import me.dio.hiokdev.reactiveflashcards.api.controller.response.DeckResponse;
 import me.dio.hiokdev.reactiveflashcards.api.controller.response.ProblemResponse;
+import me.dio.hiokdev.reactiveflashcards.api.controller.response.QuestionResponse;
+import me.dio.hiokdev.reactiveflashcards.api.controller.response.StudyResponse;
+import me.dio.hiokdev.reactiveflashcards.api.controller.response.UserPageResponse;
+import me.dio.hiokdev.reactiveflashcards.api.controller.response.UserResponse;
 import org.springframework.context.ApplicationContext;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import org.springframework.web.util.UriBuilder;
@@ -33,20 +39,6 @@ public class RequestBuilder<T> {
                 .baseUrl(baseUrl)
                 .responseTimeout(Duration.ofDays(1))
                 .build();
-    }
-
-    public static RequestBuilder<Void> noContentRequestBuilder(
-            final ApplicationContext applicationContext,
-            final String baseUrl
-    ) {
-        return new RequestBuilder<>(applicationContext, baseUrl, Void.class);
-    }
-
-    public static RequestBuilder<ProblemResponse> problemResponseRequestBuilder(
-            final ApplicationContext applicationContext,
-            final String baseUrl
-    ) {
-        return new RequestBuilder<>(applicationContext, baseUrl, ProblemResponse.class);
     }
 
     public RequestBuilder<T> uri(final Function<UriBuilder, URI> uriFunction) {
@@ -89,6 +81,62 @@ public class RequestBuilder<T> {
             throw new IllegalArgumentException("Não use a classe Void para requisições com response body de coleções");
         }
         return new CollectionRequestBuilder<T>(webTestClient, uriFunction, headers, body, responseClass);
+    }
+
+    public static RequestBuilder<Void> noContentRequestBuilder(
+            final ApplicationContext applicationContext,
+            final String baseUrl
+    ) {
+        return new RequestBuilder<>(applicationContext, baseUrl, Void.class);
+    }
+
+    public static RequestBuilder<ProblemResponse> problemResponseRequestBuilder(
+            final ApplicationContext applicationContext,
+            final String baseUrl
+    ) {
+        return new RequestBuilder<>(applicationContext, baseUrl, ProblemResponse.class);
+    }
+
+    public static RequestBuilder<DeckResponse> deckResponseRequestBuilder(
+            final ApplicationContext applicationContext,
+            final String baseUrl
+    ) {
+        return new RequestBuilder<>(applicationContext, baseUrl, DeckResponse.class);
+    }
+
+    public static RequestBuilder<UserResponse> userResponseRequestBuilder(
+            final ApplicationContext applicationContext,
+            final String baseUrl
+    ) {
+        return new RequestBuilder<>(applicationContext, baseUrl, UserResponse.class);
+    }
+
+    public static RequestBuilder<UserPageResponse> userPageResponseRequestBuilder(
+            final ApplicationContext applicationContext,
+            final String baseUrl
+    ) {
+        return new RequestBuilder<>(applicationContext, baseUrl, UserPageResponse.class);
+    }
+
+    public static RequestBuilder<QuestionResponse> questionResponseRequestBuilder(
+            final ApplicationContext applicationContext,
+            final String baseUrl
+    ) {
+        return new RequestBuilder<>(applicationContext, baseUrl, QuestionResponse.class);
+    }
+
+    public static RequestBuilder<AnswerQuestionResponse> answerQuestionResponseRequestBuilder(
+            final ApplicationContext applicationContext,
+            final String baseUrl
+    ) {
+        return new RequestBuilder<>(applicationContext, baseUrl, AnswerQuestionResponse.class);
+    }
+
+    public static RequestBuilder<StudyResponse> studyResponseRequestBuilder(
+            final ApplicationContext applicationContext,
+            final String baseUrl
+    ) {
+        return new RequestBuilder<>(applicationContext, baseUrl, StudyResponse.class);
     }
 
 }
