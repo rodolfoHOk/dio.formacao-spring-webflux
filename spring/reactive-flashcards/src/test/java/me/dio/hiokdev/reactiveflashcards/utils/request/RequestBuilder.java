@@ -1,5 +1,6 @@
 package me.dio.hiokdev.reactiveflashcards.utils.request;
 
+import me.dio.hiokdev.reactiveflashcards.api.controller.response.ProblemResponse;
 import org.springframework.context.ApplicationContext;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import org.springframework.web.util.UriBuilder;
@@ -32,6 +33,20 @@ public class RequestBuilder<T> {
                 .baseUrl(baseUrl)
                 .responseTimeout(Duration.ofDays(1))
                 .build();
+    }
+
+    public static RequestBuilder<Void> noContentRequestBuilder(
+            final ApplicationContext applicationContext,
+            final String baseUrl
+    ) {
+        return new RequestBuilder<>(applicationContext, baseUrl, Void.class);
+    }
+
+    public static RequestBuilder<ProblemResponse> problemResponseRequestBuilder(
+            final ApplicationContext applicationContext,
+            final String baseUrl
+    ) {
+        return new RequestBuilder<>(applicationContext, baseUrl, ProblemResponse.class);
     }
 
     public RequestBuilder<T> uri(final Function<UriBuilder, URI> uriFunction) {
