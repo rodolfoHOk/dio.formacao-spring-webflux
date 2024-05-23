@@ -60,7 +60,11 @@ public class StudyControllerGetCurrentQuestionTest extends AbstractControllerTes
                 .generateRequestWithSimpleBody()
                 .doGet()
                 .httpStatusIsOk()
-                .assertBody(response -> assertThat(response).isNotNull());
+                .assertBody(response -> {
+                    assertThat(response).isNotNull();
+                    assertThat(response.studyId()).isEqualTo(studyId);
+                    assertThat(response.asked()).isEqualTo(question.asked());
+                });
     }
 
     @Test
@@ -82,10 +86,11 @@ public class StudyControllerGetCurrentQuestionTest extends AbstractControllerTes
 
     @Test
     void whenTryUseInvalidIdThenReturnBadRequest() {
+        var invalidId = faker.lorem().word();
         problemResponseRequestBuilder.uri(uriBuilder -> uriBuilder
                         .pathSegment("{id}")
                         .pathSegment("current-question")
-                        .build(faker.lorem().word()))
+                        .build(invalidId))
                 .generateRequestWithSimpleBody()
                 .doGet()
                 .httpStatusIsBadRequest()
