@@ -1,5 +1,7 @@
 package me.dio.hiokdev.reactiveflashcards.core.factorybot.dto;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import me.dio.hiokdev.reactiveflashcards.core.factorybot.RandomData;
 import me.dio.hiokdev.reactiveflashcards.domain.document.DeckDocument;
 import me.dio.hiokdev.reactiveflashcards.domain.document.Question;
@@ -7,6 +9,7 @@ import me.dio.hiokdev.reactiveflashcards.domain.dto.MailMessageDTO;
 
 import java.util.List;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class MailMessageDTOFactoryBot {
 
     public static MailMessageDTOFactoryBotBuilder builder(final DeckDocument deck, final List<Question> questions){

@@ -116,7 +116,7 @@ public class StudyControllerStartTest extends AbstractControllerTest {
 
     @MethodSource
     @ParameterizedTest
-    void checkConstraintsTest(final StudyRequest requestBody, final String errorField) {
+    void checkConstraintsTest(final StudyRequest requestBody, final String field) {
         problemResponseRequestBuilder.uri(UriBuilder::build)
                 .body(requestBody)
                 .generateRequestWithSimpleBody()
@@ -125,7 +125,7 @@ public class StudyControllerStartTest extends AbstractControllerTest {
                 .assertBody(response -> {
                     assertThat(response).isNotNull();
                     assertThat(response.status()).isEqualTo(HttpStatus.BAD_REQUEST.value());
-                    assertThat(response.fields().stream().map(ErrorFieldResponse::name).toList()).contains(errorField);
+                    assertThat(response.fields().stream().map(ErrorFieldResponse::name).toList()).contains(field);
                 });
     }
 

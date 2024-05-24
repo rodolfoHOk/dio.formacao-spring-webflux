@@ -122,7 +122,7 @@ public class StudyControllerAnswerTest extends AbstractControllerTest {
 
     @MethodSource
     @ParameterizedTest
-    void checkConstraintTest(final String studyId, final AnswerQuestionRequest requestBody, final String errorField) {
+    void checkConstraintTest(final String studyId, final AnswerQuestionRequest requestBody, final String field) {
         problemResponseRequestBuilder.uri(uriBuilder -> uriBuilder
                         .pathSegment("{id}")
                         .pathSegment("answer")
@@ -134,7 +134,7 @@ public class StudyControllerAnswerTest extends AbstractControllerTest {
                 .assertBody(response -> {
                     assertThat(response).isNotNull();
                     assertThat(response.status()).isEqualTo(HttpStatus.BAD_REQUEST.value());
-                    assertThat(response.fields().stream().map(ErrorFieldResponse::name)).contains(errorField);
+                    assertThat(response.fields().stream().map(ErrorFieldResponse::name)).contains(field);
                 });
     }
 

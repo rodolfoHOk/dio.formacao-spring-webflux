@@ -1,6 +1,8 @@
 package me.dio.hiokdev.reactiveflashcards.core.factorybot.dto;
 
 import com.github.javafaker.Faker;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import me.dio.hiokdev.reactiveflashcards.core.factorybot.RandomData;
 import me.dio.hiokdev.reactiveflashcards.domain.dto.CardRestDTO;
 import me.dio.hiokdev.reactiveflashcards.domain.dto.DeckRestDTO;
@@ -10,6 +12,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class DeckRestDTOFactoryBot {
 
     public static DeckRestDTOFactoryBotBuilder builder(){

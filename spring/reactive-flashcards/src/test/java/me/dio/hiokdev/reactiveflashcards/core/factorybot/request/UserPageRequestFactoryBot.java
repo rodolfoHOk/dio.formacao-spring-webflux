@@ -1,11 +1,14 @@
 package me.dio.hiokdev.reactiveflashcards.core.factorybot.request;
 
 import com.github.javafaker.Faker;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import me.dio.hiokdev.reactiveflashcards.api.controller.request.UserPageRequest;
 import me.dio.hiokdev.reactiveflashcards.api.controller.request.UserSortBy;
 import me.dio.hiokdev.reactiveflashcards.api.controller.request.UserSortDirection;
 import me.dio.hiokdev.reactiveflashcards.core.factorybot.RandomData;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class UserPageRequestFactoryBot {
 
     public static UserPageRequestFactoryBotBuilder builder(){

@@ -1,9 +1,12 @@
 package me.dio.hiokdev.reactiveflashcards.core.factorybot.request;
 
 import com.github.javafaker.Faker;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import me.dio.hiokdev.reactiveflashcards.api.controller.request.AnswerQuestionRequest;
 import me.dio.hiokdev.reactiveflashcards.core.factorybot.RandomData;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class AnswerQuestionRequestFactoryBot {
 
     public static AnswerQuestionRequestFactoryBotBuilder builder(){
