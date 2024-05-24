@@ -9,6 +9,7 @@ import me.dio.hiokdev.reactiveflashcards.api.controller.response.UserResponse;
 import me.dio.hiokdev.reactiveflashcards.api.mapper.UserMapperImpl;
 import me.dio.hiokdev.reactiveflashcards.core.factorybot.request.UserRequestFactoryBot;
 import me.dio.hiokdev.reactiveflashcards.domain.document.UserDocument;
+import me.dio.hiokdev.reactiveflashcards.domain.exception.EmailAlreadyUsedException;
 import me.dio.hiokdev.reactiveflashcards.domain.service.UserService;
 import me.dio.hiokdev.reactiveflashcards.domain.service.query.UserQueryService;
 import me.dio.hiokdev.reactiveflashcards.utils.request.RequestBuilder;
@@ -74,6 +75,22 @@ public class UserControllerSaveTest extends AbstractControllerTest {
                     assertThat(response).usingRecursiveComparison()
                             .ignoringFields("id")
                             .isEqualTo(requestBody);
+                });
+    }
+
+    @Test
+    void whenTryUseEmailInUseThenReturnBadRequest() {
+        when(userService.save(any(UserDocument.class))).thenReturn(Mono.error(new EmailAlreadyUsedException("")));
+
+        var requestBody = UserRequestFactoryBot.builder().build();
+        problemResponseRequestBuilder.uri(UriBuilder::build)
+                .body(requestBody)
+                .generateRequestWithSimpleBody()
+                .doPost()
+                .httpStatusIsBadRequest()
+                .assertBody(response -> {
+                    assertThat(response).isNotNull();
+                    assertThat(response.status()).isEqualTo(HttpStatus.BAD_REQUEST.value());
                 });
     }
 
