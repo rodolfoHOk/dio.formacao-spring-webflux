@@ -26,7 +26,7 @@ public class DeckRequestFactoryBot {
 
         public DeckRequestFactoryBotBuilder() {
             this.name = faker.name().name();
-            this.description = faker.yoda().quote();
+            this.description = faker.color().name();
             generateCards(faker.number().numberBetween(3, 8));
         }
 
