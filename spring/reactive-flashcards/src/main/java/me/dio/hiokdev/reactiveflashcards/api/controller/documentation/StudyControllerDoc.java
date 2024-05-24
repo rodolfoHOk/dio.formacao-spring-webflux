@@ -94,7 +94,6 @@ public interface StudyControllerDoc {
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = ProblemResponse.class))
             )
     })
-    @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(value = "{id}/answer", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     Mono<AnswerQuestionResponse> answer(
             @Parameter(description = "Identificador do estudo", example = "66351f41c475b40f15b62591")

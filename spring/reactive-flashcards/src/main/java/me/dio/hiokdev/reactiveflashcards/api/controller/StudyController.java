@@ -69,7 +69,6 @@ public class StudyController implements StudyControllerDoc {
     }
 
     @Override
-    @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(value = "{id}/answer", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<AnswerQuestionResponse> answer(
             @PathVariable @Valid @MongoId(message = "{studyController.id}") final String id,

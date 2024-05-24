@@ -111,7 +111,21 @@
 - Testes: Criando embedded mongo db config para teste de repository
 - Testes: Criando request builders para teste de controllers
 - Testes: Criando user repository impl test
--
+- Testes: Criando deck controller delete test
+- Testes: Criando user controller delete test
+- Testes: Criando deck controller sync test
+- Testes: Criando deck controller find all test
+- Testes: Criando study controller get current question test
+- Testes: Criando study controller list by user id test
+- Testes: Criando deck controller find by id test
+- Testes: Criando user controller find by id test
+- Testes: Criando study controller start test
+- Testes: Criando user controller find on demand test
+- Testes: Criando study controller answer test
+- Testes: Criando deck controller save test
+- Testes: Criando user controller save test
+- Testes: Criando deck controller update test
+- Testes: Criando user controller update test
 
 ### OpenApi Document
 
